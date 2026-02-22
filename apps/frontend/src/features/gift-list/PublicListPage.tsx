@@ -63,12 +63,12 @@ export const PublicListPage = () => {
                         <img src={list.imageUrl} alt={list.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                 )}
-                <h1 style={{ color: 'var(--color-primary)', fontSize: '2.5rem' }}>{list.name}</h1>
+                <h1 style={{ color: 'var(--color-primary)', fontSize: '2.5rem', wordBreak: 'break-word' }}>{list.name}</h1>
                 <p style={{ color: 'gray', marginTop: '8px' }}>Il regalo selezionato non sarà più visibile dagli altri invitati.</p>
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px', flexWrap: 'wrap' }}>
                     <button
                         onClick={handleCopy}
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--color-border)', background: 'var(--color-surface)', cursor: 'pointer', color: 'var(--color-text)', fontSize: '14px' }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--color-border)', background: 'var(--color-surface)', cursor: 'pointer', color: 'var(--color-text)', fontSize: '14px', whiteSpace: 'nowrap' }}
                     >
                         {copied ? <Check size={16} /> : <Copy size={16} />}
                         {copied ? 'Link Copiato!' : 'Copia Link Lista'}

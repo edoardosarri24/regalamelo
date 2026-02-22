@@ -25,10 +25,13 @@ body {
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+  width: 100%;
 }
 
 * {
   box-sizing: border-box;
+  word-wrap: break-word; /* Ensure long words/URLs wrap on small screens */
 }
 
 h1,

@@ -72,8 +72,8 @@ export const ManageListPage = () => {
                 </Link>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px' }}>
-                <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start', flexWrap: 'wrap', flex: '1 1 min-content' }}>
                     <div style={{ position: 'relative' }}>
                         <div style={{ width: '80px', height: '80px', borderRadius: '50%', overflow: 'hidden', border: '3px solid var(--color-surface)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', flexShrink: 0, background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {list.imageUrl ? (
@@ -90,10 +90,10 @@ export const ManageListPage = () => {
                         </button>
                     </div>
 
-                    <div>
-                        <h1 style={{ marginTop: 0 }}>{list.name}</h1>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                            <a href={`${window.location.origin}/lists/${list.slug}`} target="_blank" rel="noreferrer" style={{ color: 'gray', fontSize: '14px', textDecoration: 'none' }}>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                        <h1 style={{ marginTop: 0, wordBreak: 'break-word' }}>{list.name}</h1>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px', flexWrap: 'wrap' }}>
+                            <a href={`${window.location.origin}/lists/${list.slug}`} target="_blank" rel="noreferrer" style={{ color: 'gray', fontSize: '14px', textDecoration: 'none', wordBreak: 'break-all' }}>
                                 Condividi lista: {window.location.origin}/lists/{list.slug}
                             </a>
                             <button
@@ -106,7 +106,7 @@ export const ManageListPage = () => {
                         </div>
                     </div>
                 </div>
-                <Button onClick={() => setShowAddForm(!showAddForm)}>
+                <Button onClick={() => setShowAddForm(!showAddForm)} style={{ whiteSpace: 'nowrap' }}>
                     {showAddForm ? 'Annulla' : 'Aggiungi Regalo'}
                 </Button>
             </div>
@@ -153,15 +153,15 @@ export const ManageListPage = () => {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         {list.items.map((item: any) => (
-                            <Card key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                                <div>
-                                    <h4 style={{ margin: 0 }}>{item.name} <span style={{ fontSize: '12px', fontWeight: 'normal', color: 'gray' }}>({item.preference === 'LOW' ? 'Bassa' : item.preference === 'MEDIUM' ? 'Media' : 'Alta'})</span></h4>
-                                    {item.description && <p style={{ fontSize: '14px', marginTop: '4px' }}>{item.description}</p>}
-                                    {item.url && <a href={item.url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', wordBreak: 'break-all' }}>Link</a>}
+                            <Card key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                                <div style={{ minWidth: 0, flex: 1 }}>
+                                    <h4 style={{ margin: 0, wordBreak: 'break-word' }}>{item.name} <span style={{ fontSize: '12px', fontWeight: 'normal', color: 'gray' }}>({item.preference === 'LOW' ? 'Bassa' : item.preference === 'MEDIUM' ? 'Media' : 'Alta'})</span></h4>
+                                    {item.description && <p style={{ fontSize: '14px', marginTop: '4px', wordBreak: 'break-word' }}>{item.description}</p>}
+                                    {item.url && <a href={item.url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', wordBreak: 'break-all', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>Link</a>}
                                 </div>
                                 <button
                                     onClick={() => { if (window.confirm('Sei sicuro?')) deleteItemMutation.mutate(item.id as string) }}
-                                    style={{ background: 'none', border: 'none', color: 'var(--color-secondary)', cursor: 'pointer' }}
+                                    style={{ background: 'none', border: 'none', color: 'var(--color-secondary)', cursor: 'pointer', flexShrink: 0 }}
                                 >
                                     <Trash2 size={20} />
                                 </button>

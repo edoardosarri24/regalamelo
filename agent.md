@@ -23,18 +23,22 @@ To balance safety and velocity, distinguish between these two types of actions:
 * **Sequence:** No code before documentation. 
 * **Focus:** Documentation must focus on the **concept** and **logic**. Avoid specific implementation details (class names) unless necessary for architectural clarity.
 
-## 2. Coding Standards
+## 2. Operational Constraints (CRITICAL)
+* **No Auto-Commit:** Do **NOT** perform git commits after making changes. The agent should limit its actions to modifying or creating files. Version control is managed by the user.
+* **No LaTeX Compilation:** Do **NOT** attempt to compile LaTeX files (e.g., via `pdflatex` or similar tools). The agent is responsible for the source code (`.tex`) only.
+
+## 3. Coding Standards
 ### Language & Style
 * **English Only:** All code and technical identifiers must be in English.
 * **Semantic Comments:** Explain the *logic* and *business reason* (the "why"), not the syntax. Code should be clean and self-explanatory.
 
-## 3. Technical & Environment Hints
+## 4. Technical & Environment Hints
 * **LaTeX Handling:** Ensure valid syntax. Respect the project structure (`main.tex`, `src/`, etc.). Use `% LOGIC:` for semantic comments in LaTeX.
 * **Containerization (MANDATORY):** Do **NOT** install any dependencies (databases, runtimes, libraries) directly on the host system. 
 * **Docker First:** All components must be containerized. Use `Dockerfile` and `docker-compose.yaml` for managing the environment.
 * **Context Awareness:** Always scan `documentation/**` before proposing any change to ensure consistency with the existing architecture.
 
-## 4. Cross-Cutting Concerns (Always Consider)
+## 5. Cross-Cutting Concerns (Always Consider)
 * **Security:** Data protection, Auth/Authz, and input validation by design.
 * **Logging:** Structured and meaningful logs for debugging and auditing.
 * **Deployment:** Keep configuration separate from code; ensure the process is repeatable and environment-agnostic via Docker.

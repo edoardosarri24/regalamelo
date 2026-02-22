@@ -47,7 +47,7 @@ export const DashboardPage = () => {
             {isLoading ? (
                 <div>{t('loading')}</div>
             ) : lists && lists.length > 0 ? (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
                     {lists.map(list => (
                         <Card key={list.id}>
                             <h3>{list.name}</h3>
@@ -61,7 +61,7 @@ export const DashboardPage = () => {
                     ))}
                 </div>
             ) : (
-                <Card style={{ textAlign: 'center', padding: '48px 24px' }}>
+                <Card style={{ textAlign: 'center', padding: '48px 24px', width: '100%' }}>
                     <h3>{t('noListsTitle')}</h3>
                     <p style={{ color: 'gray', marginTop: '8px', marginBottom: '16px' }}>{t('noListsMsg')}</p>
                     <Link to="/dashboard/new" style={{ textDecoration: 'none' }}>

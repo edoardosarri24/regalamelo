@@ -170,15 +170,15 @@ export const ImageUploader = ({ onSave, onCancel, isLoading = false }: ImageUplo
                         <span style={{ background: 'var(--color-surface)', padding: '0 12px', position: 'relative' }}>OPPURE</span>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
                         <input
                             type="text"
                             placeholder="Incolla solo URL (es: https://...)"
                             value={originalUrl}
                             onChange={handleUrlPaste}
-                            style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--color-border)', fontSize: '15px' }}
+                            style={{ flex: '1 1 min-content', minWidth: '150px', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--color-border)', fontSize: '15px' }}
                         />
-                        <Button type="button" onClick={() => setImageSrc(originalUrl)} disabled={!originalUrl}>Carica URL</Button>
+                        <Button type="button" onClick={() => setImageSrc(originalUrl)} disabled={!originalUrl} style={{ whiteSpace: 'nowrap' }}>Carica URL</Button>
                     </div>
                 </>
             ) : (
@@ -209,9 +209,9 @@ export const ImageUploader = ({ onSave, onCancel, isLoading = false }: ImageUplo
                             style={{ flex: 1, cursor: 'pointer' }}
                         />
                     </div>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
-                        <Button type="button" variant="secondary" onClick={() => setImageSrc(null)} disabled={isLoading}>Indietro</Button>
-                        <Button type="button" onClick={showCroppedImage} isLoading={isLoading}>Conferma Taglio</Button>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', flexWrap: 'wrap' }}>
+                        <Button type="button" variant="secondary" onClick={() => setImageSrc(null)} disabled={isLoading} style={{ whiteSpace: 'nowrap' }}>Indietro</Button>
+                        <Button type="button" onClick={showCroppedImage} isLoading={isLoading} style={{ whiteSpace: 'nowrap' }}>Conferma Taglio</Button>
                     </div>
                 </>
             )}
