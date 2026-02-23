@@ -11,6 +11,129 @@ import { Input } from '../../components/Input';
 import { Trash2, Copy, Check, Pencil } from 'lucide-react';
 import { ImageUploader } from './ImageUploader';
 
+const ManageItemCard = ({ item, slug, onDelete }: { item: any; slug: string; onDelete: () => void }) => {
+    const queryClient = useQueryClient();
+    const [isEditing, setIsEditing] = useState(false);
+    const [editImage, setEditImage] = useState<string | null>(item.imageUrl || null);
+    const [isEditingImage, setIsEditingImage] = useState(false);
+
+    const { register, handleSubmit, formState: { errors } } = useForm<CreateGiftItemInput>({
+        resolver: zodResolver(CreateGiftItemSchema),
+        defaultValues: {
+            name: item.name,
+            description: item.description || '',
+            url: item.url || '',
+            preference: item.preference,
+        }
+    });
+
+    const updateItemMutation = useMutation({
+        mutationFn: (data: any) => {
+            const payload = { ...data };
+            if (editImage !== undefined) {
+                payload.imageUrl = editImage;
+            }
+            return api.patch(`/items/${item.id}`, payload);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['manage-list', slug] });
+            setIsEditing(false);
+        }
+    });
+
+    if (isEditing) {
+        return (
+            <Card style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {isEditingImage ? (
+                    <ImageUploader
+                        shape="rect"
+                        aspectRatio={1}
+                        title="Modifica Immagine Regalo"
+                        onSave={(url) => {
+                            setEditImage(url);
+                            setIsEditingImage(false);
+                        }}
+                        onCancel={() => setIsEditingImage(false)}
+                    />
+                ) : (
+                    <form onSubmit={handleSubmit((data) => updateItemMutation.mutate(data))}>
+                        <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <div style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0, background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {editImage ? (
+                                    <img src={editImage} alt="Regalo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <span style={{ color: 'var(--color-text-secondary)', fontSize: '10px', textAlign: 'center' }}>Nessuna foto</span>
+                                )}
+                            </div>
+                            <Button type="button" variant="outline" onClick={() => setIsEditingImage(true)}>
+                                {editImage ? 'Cambia Foto' : 'Aggiungi Foto'}
+                            </Button>
+                            {editImage && (
+                                <Button type="button" variant="secondary" onClick={() => setEditImage(null)}>
+                                    Rimuovi
+                                </Button>
+                            )}
+                        </div>
+
+                        <Input label="Nome" placeholder="es. Nintendo Switch" {...register('name')} error={errors.name?.message} />
+                        <Input label="Descrizione (Opzionale)" placeholder="Dettagli specifici" {...register('description')} error={errors.description?.message} />
+                        <Input label="URL (Opzionale)" placeholder="https://..." {...register('url')} error={errors.url?.message} />
+
+                        <div style={{ marginBottom: '16px' }}>
+                            <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', fontWeight: 500 }}>Preferenza</label>
+                            <select {...register('preference')} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', width: '100%' }}>
+                                <option value="LOW">Bassa</option>
+                                <option value="MEDIUM">Media</option>
+                                <option value="HIGH">Alta</option>
+                            </select>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <Button type="submit" isLoading={updateItemMutation.isPending}>Salva Modifiche</Button>
+                            <Button type="button" variant="ghost" onClick={() => {
+                                setIsEditing(false);
+                                setEditImage(item.imageUrl || null);
+                            }}>Annulla</Button>
+                        </div>
+                    </form>
+                )}
+            </Card>
+        );
+    }
+
+    return (
+        <Card style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+            <div style={{ display: 'flex', gap: '16px', flex: 1, minWidth: 0 }}>
+                <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0, background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {item.imageUrl ? (
+                        <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                        <span style={{ color: 'var(--color-text-secondary)', fontSize: '10px', textAlign: 'center' }}>No foto</span>
+                    )}
+                </div>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                    <h4 style={{ margin: 0, wordBreak: 'break-word' }}>{item.name} <span style={{ fontSize: '12px', fontWeight: 'normal', color: 'gray' }}>({item.preference === 'LOW' ? 'Bassa' : item.preference === 'MEDIUM' ? 'Media' : 'Alta'})</span></h4>
+                    {item.description && <p style={{ fontSize: '14px', marginTop: '4px', wordBreak: 'break-word' }}>{item.description}</p>}
+                    {item.url && <a href={item.url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', wordBreak: 'break-all', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>Link</a>}
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                <button
+                    onClick={() => setIsEditing(true)}
+                    style={{ background: 'none', border: 'none', color: 'var(--color-primary)', cursor: 'pointer', padding: '4px' }}
+                >
+                    <Pencil size={20} />
+                </button>
+                <button
+                    onClick={onDelete}
+                    style={{ background: 'none', border: 'none', color: 'var(--color-secondary)', cursor: 'pointer', padding: '4px' }}
+                >
+                    <Trash2 size={20} />
+                </button>
+            </div>
+        </Card>
+    );
+};
+
 export const ManageListPage = () => {
     const { slug } = useParams<{ slug: string }>();
     const queryClient = useQueryClient();
@@ -200,28 +323,12 @@ export const ManageListPage = () => {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         {list.items.map((item: any) => (
-                            <Card key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
-                                <div style={{ display: 'flex', gap: '16px', flex: 1, minWidth: 0 }}>
-                                    <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0, background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        {item.imageUrl ? (
-                                            <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        ) : (
-                                            <span style={{ color: 'var(--color-text-secondary)', fontSize: '10px', textAlign: 'center' }}>No foto</span>
-                                        )}
-                                    </div>
-                                    <div style={{ minWidth: 0, flex: 1 }}>
-                                        <h4 style={{ margin: 0, wordBreak: 'break-word' }}>{item.name} <span style={{ fontSize: '12px', fontWeight: 'normal', color: 'gray' }}>({item.preference === 'LOW' ? 'Bassa' : item.preference === 'MEDIUM' ? 'Media' : 'Alta'})</span></h4>
-                                        {item.description && <p style={{ fontSize: '14px', marginTop: '4px', wordBreak: 'break-word' }}>{item.description}</p>}
-                                        {item.url && <a href={item.url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', wordBreak: 'break-all', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>Link</a>}
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => { if (window.confirm('Sei sicuro?')) deleteItemMutation.mutate(item.id as string) }}
-                                    style={{ background: 'none', border: 'none', color: 'var(--color-secondary)', cursor: 'pointer', flexShrink: 0 }}
-                                >
-                                    <Trash2 size={20} />
-                                </button>
-                            </Card>
+                            <ManageItemCard
+                                key={item.id}
+                                item={item}
+                                slug={slug!}
+                                onDelete={() => { if (window.confirm('Sei sicuro?')) deleteItemMutation.mutate(item.id as string) }}
+                            />
                         ))}
                     </div>
                 )}
