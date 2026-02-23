@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/auth';
 import { validateBody } from '../middlewares/validate';
-import { CreateGiftListSchema, GuestAccessSchema, UpdateGiftListSchema } from '@gift-list/shared';
+import { CreateGiftListSchema, GuestAccessSchema, UpdateGiftListSchema, UpdateGuestAccessNameSchema } from '@gift-list/shared';
 import {
     getUserDashboardLists,
     createList,
@@ -9,13 +9,15 @@ import {
     deleteList,
     createGuestAccess,
     getListPublic,
-    updateList
+    updateList,
+    updateListGuestName
 } from '../controllers/list.controller';
 
 const router = Router();
 
 // Guest Routes (Now requires User account JWT)
 router.post('/:slug/access', authenticateJWT, validateBody(GuestAccessSchema), createGuestAccess);
+router.put('/:slug/access', authenticateJWT, validateBody(UpdateGuestAccessNameSchema), updateListGuestName);
 router.get('/:slug', authenticateJWT, getListPublic);
 // router.get('/:slug/my-claims', authenticateJWT, getMyClaims);
 

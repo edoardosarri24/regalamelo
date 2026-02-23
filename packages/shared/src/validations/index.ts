@@ -40,6 +40,10 @@ export const GuestAccessSchema = z.object({
     language: z.string().min(2).max(5).default('en'),
 });
 
+export const UpdateGuestAccessNameSchema = z.object({
+    customName: z.string().min(1, 'Name must be at least 1 character').max(50, 'Name cannot exceed 50 characters'),
+});
+
 // Infer types
 export type RegisterUserInput = z.infer<typeof RegisterUserSchema>;
 export type LoginUserInput = z.infer<typeof LoginUserSchema>;
@@ -48,3 +52,4 @@ export type UpdateGiftListInput = z.infer<typeof UpdateGiftListSchema>;
 export type CreateGiftItemInput = z.infer<typeof CreateGiftItemSchema>;
 export type UpdateGiftItemInput = z.infer<typeof UpdateGiftItemSchema>;
 export type GuestAccessInput = z.infer<typeof GuestAccessSchema>;
+export type UpdateGuestAccessNameInput = z.infer<typeof UpdateGuestAccessNameSchema>;

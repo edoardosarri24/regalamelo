@@ -36,6 +36,7 @@ export interface GiftItemDTO {
 export interface GiftListDTO {
     id: string;
     name: string;
+    customName?: string | null;
     slug: string;
     imageUrl?: string | null;
     items: GiftItemDTO[];

@@ -62,14 +62,15 @@ model GiftItem {
 }
 
 model GuestAccess {
-  id        String       @id @default(uuid())
-  listId    String
-  list      GiftList     @relation(fields: [listId], references: [id])
-  userId    String
-  user      User         @relation(fields: [userId], references: [id])
-  language  String       @default("en")
-  claims    GuestClaim[]
-  createdAt DateTime     @default(now())
+  id         String       @id @default(uuid())
+  listId     String
+  list       GiftList     @relation(fields: [listId], references: [id])
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  language   String       @default("en")
+  customName String?
+  claims     GuestClaim[]
+  createdAt  DateTime     @default(now())
 
   @@unique([listId, userId])
 }

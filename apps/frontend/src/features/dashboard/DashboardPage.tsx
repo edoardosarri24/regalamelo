@@ -7,8 +7,8 @@ import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useState, useRef, useEffect } from 'react';
+import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 export const DashboardPage = () => {
@@ -41,6 +41,59 @@ export const DashboardPage = () => {
         } finally {
             setIsJoining(false);
         }
+    };
+
+    const updateNameMutation = useMutation({
+        mutationFn: ({ slug, customName }: { slug: string, customName: string }) =>
+            api.put(`/lists/${slug}/access`, { customName }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['dashboard-lists'] });
+        }
+    });
+
+    const EditingCard = ({ list }: { list: GiftListDTO }) => {
+        const [isEditing, setIsEditing] = useState(false);
+        const [editValue, setEditValue] = useState(list.customName || list.name);
+
+        const handleSave = () => {
+            updateNameMutation.mutate({ slug: list.slug, customName: editValue });
+            setIsEditing(false);
+        };
+
+        return (
+            <Card key={list.id}>
+                {isEditing ? (
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                        <Input
+                            autoFocus
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onBlur={(e) => {
+                                // Save on blur if clicked outside buttons
+                                if (!e.relatedTarget) handleSave();
+                            }}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                        />
+                        <Button onClick={handleSave} variant="primary" style={{ padding: '0 8px' }}>{t('save')}</Button>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h3 style={{ margin: 0 }}>{list.customName || list.name}</h3>
+                        <Button variant="outline" onClick={() => setIsEditing(true)} style={{ padding: '4px 8px', fontSize: '12px' }}>
+                            {t('editListLocalName')}
+                        </Button>
+                    </div>
+                )}
+                {list.customName && <p style={{ fontSize: '12px', color: 'gray', marginTop: '4px' }}>Original: {list.name}</p>}
+
+                <p style={{ marginTop: '8px', color: 'gray' }}>{t('giftsCount')}: {list.items.length}</p>
+                <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                    <Link to={`/lists/${list.slug}`} style={{ flex: 1, textDecoration: 'none' }}>
+                        <Button variant="outline" style={{ width: '100%' }}>{t('view')}</Button>
+                    </Link>
+                </div>
+            </Card>
+        );
     };
 
     if (!user) return <Navigate to="/" replace />;
@@ -116,15 +169,7 @@ export const DashboardPage = () => {
                             <h2 style={{ marginBottom: '16px' }}>{t('invitedLists')}</h2>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
                                 {lists.invitedLists.map(list => (
-                                    <Card key={list.id}>
-                                        <h3>{list.name}</h3>
-                                        <p style={{ marginTop: '8px', color: 'gray' }}>{t('giftsCount')}: {list.items.length}</p>
-                                        <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
-                                            <Link to={`/lists/${list.slug}`} style={{ flex: 1, textDecoration: 'none' }}>
-                                                <Button variant="outline" style={{ width: '100%' }}>{t('view')}</Button>
-                                            </Link>
-                                        </div>
-                                    </Card>
+                                    <EditingCard key={list.id} list={list} />
                                 ))}
                             </div>
                         </div>

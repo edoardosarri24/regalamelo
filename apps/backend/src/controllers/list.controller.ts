@@ -39,7 +39,7 @@ export const getUserDashboardLists = async (req: Request, res: Response, next: N
                     })
                     .filter((item: any) => item.status === 'AVAILABLE' || item.isClaimedByMe);
 
-                return { id: list.id, name: list.name, slug: list.slug, imageUrl: list.imageUrl, items: publicItems };
+                return { id: list.id, name: list.name, customName: ga.customName, slug: list.slug, imageUrl: list.imageUrl, items: publicItems };
             });
 
         res.json({ ownedLists, invitedLists });
@@ -178,6 +178,28 @@ export const createGuestAccess = async (req: Request, res: Response, next: NextF
     }
 };
 
+export const updateListGuestName = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { slug } = req.params;
+        const userId = (req as any).user.id;
+        const { customName } = req.body;
+
+        const list = await prisma.giftList.findUnique({ where: { slug, deletedAt: null } });
+        if (!list) {
+            throw { status: 404, code: ErrorCodes.LIST_NOT_FOUND, message: 'List not found' };
+        }
+
+        const access = await prisma.guestAccess.update({
+            where: { listId_userId: { listId: list.id, userId } },
+            data: { customName }
+        });
+
+        res.json({ success: true, customName: access.customName });
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const getListPublic = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { slug } = req.params;
@@ -219,7 +241,7 @@ export const getListPublic = async (req: Request, res: Response, next: NextFunct
             // Guest should only see available items or items they claimed themselves
             .filter((item: any) => item.status === 'AVAILABLE' || item.isClaimedByMe);
 
-        res.json({ id: list.id, name: list.name, slug: list.slug, imageUrl: list.imageUrl, items: publicItems });
+        res.json({ id: list.id, name: list.name, customName: guestAccess?.customName, slug: list.slug, imageUrl: list.imageUrl, items: publicItems });
     } catch (err) {
         next(err);
     }

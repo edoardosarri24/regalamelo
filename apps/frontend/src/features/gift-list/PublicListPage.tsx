@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Navigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Input } from '../../components/Input';
 import api from '../../lib/axios';
 import { GiftListDTO } from '@gift-list/shared';
 import { GiftCard } from './GiftCard';
@@ -15,6 +16,8 @@ export const PublicListPage = () => {
     const queryClient = useQueryClient();
     const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    const [isEditingName, setIsEditingName] = useState(false);
+    const [editNameValue, setEditNameValue] = useState('');
 
     const { data: list, isLoading, error } = useQuery({
         queryKey: ['public-list', slug],
@@ -28,8 +31,19 @@ export const PublicListPage = () => {
     useEffect(() => {
         if (list && slug) {
             api.post(`/lists/${slug}/access`, { language }).catch(console.error);
+            if (!editNameValue) {
+                setEditNameValue(list.customName || list.name);
+            }
         }
     }, [list, slug, language]);
+
+    const updateNameMutation = useMutation({
+        mutationFn: (customName: string) => api.put(`/lists/${slug}/access`, { customName }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['public-list', slug] });
+            setIsEditingName(false);
+        }
+    });
 
     const claimMutation = useMutation({
         mutationFn: (itemId: string) => api.post(`/items/${itemId}/claim`),
@@ -82,8 +96,30 @@ export const PublicListPage = () => {
                         <img src={list.imageUrl} alt={list.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     </div>
                 )}
-                <h1 style={{ color: 'var(--color-primary)', fontSize: '2.5rem', wordBreak: 'break-word' }}>{list.name}</h1>
-                <p style={{ color: 'gray', marginTop: '8px' }}>Il regalo selezionato non sarà più visibile dagli altri invitati.</p>
+                {isEditingName ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '8px', alignItems: 'center' }}>
+                        <Input
+                            autoFocus
+                            value={editNameValue}
+                            onChange={(e) => setEditNameValue(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && updateNameMutation.mutate(editNameValue)}
+                        />
+                        <Button onClick={() => updateNameMutation.mutate(editNameValue)} variant="primary">{t('save')}</Button>
+                        <Button onClick={() => setIsEditingName(false)} variant="outline">Annulla</Button>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <h1 style={{ color: 'var(--color-primary)', fontSize: '2.5rem', wordBreak: 'break-word', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            {list.customName || list.name}
+                        </h1>
+                        <Button variant="outline" onClick={() => setIsEditingName(true)} style={{ marginTop: '8px', padding: '4px 12px', fontSize: '14px' }}>
+                            {t('editListLocalName')}
+                        </Button>
+                    </div>
+                )}
+                {list.customName && !isEditingName && <p style={{ fontSize: '14px', color: 'gray', marginTop: '4px' }}>Originale: {list.name}</p>}
+
+                <p style={{ color: 'gray', marginTop: '16px' }}>Il regalo selezionato non sarà più visibile dagli altri invitati.</p>
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px', flexWrap: 'wrap' }}>
                     <button
                         onClick={handleCopy}
