@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { authenticateJWT, authenticateGuest } from '../middlewares/auth';
+import { authenticateJWT } from '../middlewares/auth';
 import { validateBody } from '../middlewares/validate';
 import { CreateGiftListSchema, GuestAccessSchema, UpdateGiftListSchema } from '@gift-list/shared';
 import {
-    getCelebrantLists,
+    getUserDashboardLists,
     createList,
     getListManage,
     deleteList,
@@ -14,13 +14,13 @@ import {
 
 const router = Router();
 
-// Guest Routes
-router.post('/:slug/access', validateBody(GuestAccessSchema), createGuestAccess);
-router.get('/:slug', authenticateGuest, getListPublic);
-// router.get('/:slug/my-claims', authenticateGuest, getMyClaims);
+// Guest Routes (Now requires User account JWT)
+router.post('/:slug/access', authenticateJWT, validateBody(GuestAccessSchema), createGuestAccess);
+router.get('/:slug', authenticateJWT, getListPublic);
+// router.get('/:slug/my-claims', authenticateJWT, getMyClaims);
 
 // Celebrant Routes
-router.get('/', authenticateJWT, getCelebrantLists);
+router.get('/', authenticateJWT, getUserDashboardLists);
 router.post('/', authenticateJWT, validateBody(CreateGiftListSchema), createList);
 router.get('/:slug/manage', authenticateJWT, getListManage);
 router.put('/:slug/manage', authenticateJWT, validateBody(UpdateGiftListSchema), updateList);

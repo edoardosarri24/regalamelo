@@ -3,15 +3,16 @@ This document outlines the concept for a "Gift List" application, designed to st
 
 \myskip
 
-The application serves two primary user roles:
+The application serves users who can switch between two primary roles within the platform:
 \begin{itemize}
-    \item The Celebrant \\
-        This user creates and manages their gift list. They can add, remove, and describe desired items. Critically, the celebrant will not have visibility into the real-time status of their gift list regarding which items have been claimed. This maintains the element of surprise for them.
-    \item The Guest \\
-        Guests receive a link to the celebrant's gift list. They can browse the available items and, crucially, "claim" a gift they intend to purchase. Once a gift is claimed by one guest, it becomes visibly unavailable to all other guests. This mechanism prevents duplicate gifts and helps guests coordinate their purchases efficiently.
+    \item As a Celebrant \\
+        A user creates and manages their own gift lists. They can add, remove, and describe desired items. Critically, as the creator of a list, the user will not have visibility into the real-time status of their gift list regarding which items have been claimed. This maintains the element of surprise for them.
+    \item As a Guest \\
+        A user receives a link to another user's gift list. To view the items or interact with the list, they must be registered and logged into the platform. Once authenticated, they can browse the available items and "claim" a gift they intend to purchase. This mechanism prevents duplicate gifts and helps guests coordinate their purchases efficiently.
 \end{itemize}
 
-The primary goal of this application is to simplify gift coordination, reduce redundant gifts, and enhance the gift-giving experience by ensuring celebrants receive desired items while preserving the element of surprise.
+% LOGIC: All users must register to access the platform's features, allowing each user to act both as a list creator (celebrant) and a gift giver (guest). This enables a unified dashboard experience.
+The primary goal of this application is to simplify gift coordination, reduce redundant gifts, and enhance the gift-giving experience by ensuring celebrants receive desired items while preserving the element of surprise, all within a unified platform.
 
 \begin{figure}[htbp]
     \centering
@@ -23,28 +24,28 @@ The primary goal of this application is to simplify gift coordination, reduce re
 \section{Requirements}
 In this Section we will define the requirements for the application. The application must meet the following functional requirements:
 \begin{itemize}
-    \item \textbf{Celebrant Management}
+    \item \textbf{User Management and Dashboard}
     \begin{itemize}
-        \item User Authentication (Celebrant Only) \\
-            The application must allow Celebrants to register and log-in to manage their lists securely. Guests should be able to access lists via a shared link without requiring an account, to minimize friction.
+        \item User Authentication \\
+            The application must require all users to register and log-in to access any features. Whether creating a new list or responding to an invitation, an authenticated account is mandatory.
+        \item Unified Dashboard \\
+            Users must have access to a centralized dashboard divided into two distinct sections: lists they have created (acting as a Celebrant) and lists they have joined (acting as a Guest).
         \item List Management \\
-            Authenticated Celebrants must be able to create and delete gift lists.
+            Users must be able to create and delete their own gift lists from the dashboard.
         \item Item Management \\
-            Celebrants must be able to add, edit, and remove items from their lists. For each item, they can provide a name, description, an optional external URL, and set a preference level (e.g., Low, Medium, High).
+            For lists they own, users must be able to add, edit, and remove items. For each item, they can provide a name, description, an optional external URL, and set a preference level.
     \end{itemize}
 
     \item \textbf{Guest Interaction}
     \begin{itemize}
         \item List Access \\
-            Guests must be able to view a specific gift list using a unique URL provided by the Celebrant. To access the list items, a Guest must provide an email address; this is mandatory to ensure the system can notify the Guest if a claimed item is subsequently removed by the Celebrant.
+            Users must be able to view a specific gift list using a unique URL invitation. Accessing this URL will either prompt login/registration or immediately link the list to their account, making it visible in their "joined lists" dashboard section.
         \item Item Claiming \\
-            Guests must be able to mark an item as "claimed" or "purchased". This action must be visible to other Guests to prevent duplicate purchases but must remain hidden from the Celebrant to preserve the surprise.
+            Users acting as guests must be able to mark an item as "claimed" or "purchased". This action must be visible to other guests to prevent duplicate purchases but must remain hidden from the list owner to preserve the surprise.
         \item Item Unclaiming \\
-            Guests must be able to revert a claim (e.g., in case of accidental selection), making the item available again. This action is only permitted for the guest who originally claimed the item.
+            Users must be able to revert a claim, making the item available again. This action is only permitted for the user who originally claimed the item.
         \item Personal Claim Visibility \\
-            Guests accessing the list should clearly distinguish which items they have personally claimed versus those claimed by others, facilitating easier management of their intended purchases.
-        \item Guest Claim Summary \\
-            Guests must have access to a dedicated view or section that lists only the items they have personally claimed for a specific list, providing a clear summary of their planned gifts.
+            Users viewing a joined list should clearly distinguish which items they have personally claimed versus those claimed by others.
     \end{itemize}
 
     \item \textbf{System Integrity}

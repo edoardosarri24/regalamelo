@@ -28,6 +28,7 @@ model User {
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   lists              GiftList[]
+  guestAccess        GuestAccess[]
 }
 
 model GiftList {
@@ -64,12 +65,13 @@ model GuestAccess {
   id        String       @id @default(uuid())
   listId    String
   list      GiftList     @relation(fields: [listId], references: [id])
-  email     String
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
   language  String       @default("en")
   claims    GuestClaim[]
   createdAt DateTime     @default(now())
 
-  @@unique([listId, email])
+  @@unique([listId, userId])
 }
 
 model GuestClaim {

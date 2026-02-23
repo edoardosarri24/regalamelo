@@ -5,19 +5,50 @@ import api from '../../lib/axios';
 import { GiftListDTO } from '@gift-list/shared';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
+import { Input } from '../../components/Input';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 export const DashboardPage = () => {
     const { user, logout } = useAuth();
     const { t, language, setLanguage } = useLanguage();
+    const queryClient = useQueryClient();
+    const [joinInput, setJoinInput] = useState('');
+    const [joinError, setJoinError] = useState('');
+    const [isJoining, setIsJoining] = useState(false);
+
+    const handleJoin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setJoinError('');
+        if (!joinInput.trim()) return;
+
+        setIsJoining(true);
+        try {
+            // Extract slug if a full URL is pasted
+            let slug = joinInput.trim();
+            if (slug.includes('/lists/')) {
+                const parts = slug.split('/lists/');
+                slug = parts[parts.length - 1].split('/')[0].split('?')[0];
+            }
+
+            await api.post(`/lists/${slug}/access`, { language });
+            setJoinInput('');
+            queryClient.invalidateQueries({ queryKey: ['dashboard-lists'] });
+        } catch (err: any) {
+            setJoinError(t('joinListError'));
+        } finally {
+            setIsJoining(false);
+        }
+    };
 
     if (!user) return <Navigate to="/" replace />;
 
     const { data: lists, isLoading } = useQuery({
-        queryKey: ['celebrant-lists'],
+        queryKey: ['dashboard-lists'],
         queryFn: async () => {
-            const { data } = await api.get<GiftListDTO[]>('/lists');
+            const { data } = await api.get<{ ownedLists: GiftListDTO[], invitedLists: GiftListDTO[] }>('/lists');
             return data;
         },
     });
@@ -38,27 +69,66 @@ export const DashboardPage = () => {
                 </div>
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: '24px', display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
                 <Link to="/dashboard/new" style={{ textDecoration: 'none' }}>
                     <Button variant="primary">{t('createNewList')}</Button>
                 </Link>
+                <form onSubmit={handleJoin} style={{ display: 'flex', gap: '8px', flex: 1, minWidth: '300px' }}>
+                    <div style={{ flex: 1 }}>
+                        <Input
+                            value={joinInput}
+                            onChange={(e) => setJoinInput(e.target.value)}
+                            placeholder={t('joinListInput')}
+                            error={joinError}
+                        />
+                    </div>
+                    <Button type="submit" variant="outline" isLoading={isJoining} style={{ height: '42px' }}>
+                        {t('joinListButton')}
+                    </Button>
+                </form>
             </div>
 
             {isLoading ? (
                 <div>{t('loading')}</div>
-            ) : lists && lists.length > 0 ? (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
-                    {lists.map(list => (
-                        <Card key={list.id}>
-                            <h3>{list.name}</h3>
-                            <p style={{ marginTop: '8px', color: 'gray' }}>{t('giftsCount')}: {list.items.length}</p>
-                            <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
-                                <Link to={`/dashboard/${list.slug}`} style={{ flex: 1, textDecoration: 'none' }}>
-                                    <Button variant="outline" style={{ width: '100%' }}>{t('manage')}</Button>
-                                </Link>
+            ) : lists && (lists.ownedLists.length > 0 || lists.invitedLists.length > 0) ? (
+                <div>
+                    {lists.ownedLists.length > 0 && (
+                        <div style={{ marginBottom: '32px' }}>
+                            <h2 style={{ marginBottom: '16px' }}>{t('myLists')}</h2>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
+                                {lists.ownedLists.map(list => (
+                                    <Card key={list.id}>
+                                        <h3>{list.name}</h3>
+                                        <p style={{ marginTop: '8px', color: 'gray' }}>{t('giftsCount')}: {list.items.length}</p>
+                                        <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                                            <Link to={`/dashboard/${list.slug}`} style={{ flex: 1, textDecoration: 'none' }}>
+                                                <Button variant="outline" style={{ width: '100%' }}>{t('manage')}</Button>
+                                            </Link>
+                                        </div>
+                                    </Card>
+                                ))}
                             </div>
-                        </Card>
-                    ))}
+                        </div>
+                    )}
+
+                    {lists.invitedLists.length > 0 && (
+                        <div>
+                            <h2 style={{ marginBottom: '16px' }}>{t('invitedLists')}</h2>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
+                                {lists.invitedLists.map(list => (
+                                    <Card key={list.id}>
+                                        <h3>{list.name}</h3>
+                                        <p style={{ marginTop: '8px', color: 'gray' }}>{t('giftsCount')}: {list.items.length}</p>
+                                        <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                                            <Link to={`/lists/${list.slug}`} style={{ flex: 1, textDecoration: 'none' }}>
+                                                <Button variant="outline" style={{ width: '100%' }}>{t('view')}</Button>
+                                            </Link>
+                                        </div>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <Card style={{ textAlign: 'center', padding: '48px 24px', width: '100%' }}>

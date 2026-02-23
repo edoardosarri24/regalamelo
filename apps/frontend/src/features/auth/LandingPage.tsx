@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 import { useAuth } from '../../hooks/useAuth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import styles from './Auth.module.css';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { LanguageToggle } from '../../components/LanguageToggle';
@@ -11,9 +11,14 @@ export const LandingPage = () => {
     const { user, isLoading } = useAuth();
     const { t } = useLanguage();
     const [isLogin, setIsLogin] = useState(true);
+    const location = useLocation();
 
     if (isLoading) return null; // or a full screen spinner
-    if (user) return <Navigate to="/dashboard" replace />;
+    if (user) {
+        const params = new URLSearchParams(location.search);
+        const returnTo = params.get('returnTo') || '/dashboard';
+        return <Navigate to={returnTo} replace />;
+    }
 
     return (
         <div className={styles.landing}>

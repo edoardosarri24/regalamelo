@@ -1,14 +1,17 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, Navigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../lib/axios';
 import { GiftListDTO } from '@gift-list/shared';
 import { GiftCard } from './GiftCard';
-import { GuestAccessPage } from './GuestAccessPage';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
+import { Button } from '../../components/Button';
 
 export const PublicListPage = () => {
     const { slug } = useParams<{ slug: string }>();
+    const location = useLocation();
+    const { language } = useLanguage();
     const queryClient = useQueryClient();
     const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
@@ -21,6 +24,12 @@ export const PublicListPage = () => {
         },
         retry: false
     });
+
+    useEffect(() => {
+        if (list && slug) {
+            api.post(`/lists/${slug}/access`, { language }).catch(console.error);
+        }
+    }, [list, slug, language]);
 
     const claimMutation = useMutation({
         mutationFn: (itemId: string) => api.post(`/items/${itemId}/claim`),
@@ -48,15 +57,25 @@ export const PublicListPage = () => {
 
     if (isLoading) return <div style={{ padding: '48px', textAlign: 'center' }}>Caricamento Lista...</div>;
 
-    // If unauthorized, guest doesn't have a session, show Access page
+    // If unauthorized, guest doesn't have a session, redirect to login
     if (error && (error as any).response?.status === 401) {
-        return <GuestAccessPage />;
+        return <Navigate to={`/?returnTo=${encodeURIComponent(location.pathname)}`} replace />;
     }
 
     if (!list) return <div style={{ padding: '48px', textAlign: 'center' }}>Lista non trovata.</div>;
 
+    const { t } = useLanguage();
+
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
+            <div style={{ marginBottom: '24px' }}>
+                <Link to="/dashboard" style={{ textDecoration: 'none' }}>
+                    <Button variant="outline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <ArrowLeft size={16} />
+                        {t('backToDashboard')}
+                    </Button>
+                </Link>
+            </div>
             <div style={{ marginBottom: '48px', textAlign: 'center' }}>
                 {list.imageUrl && (
                     <div style={{ width: '120px', height: '120px', borderRadius: '50%', overflow: 'hidden', margin: '0 auto 24px', border: '4px solid var(--color-surface)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>

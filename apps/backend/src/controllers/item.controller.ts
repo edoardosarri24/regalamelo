@@ -71,7 +71,11 @@ export const deleteItem = async (req: Request, res: Response, next: NextFunction
             include: {
                 list: true,
                 claim: {
-                    include: { guest: true }
+                    include: {
+                        guest: {
+                            include: { user: true }
+                        }
+                    }
                 }
             }
         });
@@ -83,7 +87,7 @@ export const deleteItem = async (req: Request, res: Response, next: NextFunction
         if (item.status === 'CLAIMED' && item.claim) {
             // Asynchronously send notification to avoid blocking the response
             sendClaimedItemRemovalNotification(
-                item.claim.guest.email,
+                item.claim.guest.user.email,
                 item.name,
                 item.list.name,
                 item.claim.guest.language

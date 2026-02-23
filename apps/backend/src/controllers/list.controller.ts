@@ -3,14 +3,46 @@ import prisma from '../utils/prisma';
 import { CreateGiftListInput, ErrorCodes, GuestAccessInput } from '@gift-list/shared';
 import crypto from 'crypto';
 
-export const getCelebrantLists = async (req: Request, res: Response, next: NextFunction) => {
+export const getUserDashboardLists = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userId = (req as any).user.id;
-        const lists = await prisma.giftList.findMany({
+        const ownedLists = await prisma.giftList.findMany({
             where: { userId, deletedAt: null },
             include: { items: { where: { deletedAt: null } } }
         });
-        res.json(lists);
+
+        const guestAccesses = await prisma.guestAccess.findMany({
+            where: { userId },
+            include: {
+                list: {
+                    include: { items: { where: { deletedAt: null }, include: { claim: true } } }
+                }
+            }
+        });
+
+        const invitedLists = guestAccesses
+            .filter(ga => ga.list.deletedAt === null)
+            .map(ga => {
+                const list = ga.list;
+                const publicItems = list.items
+                    .map((item: any) => {
+                        const isClaimedByMe = item.claim?.guestId === ga.id;
+                        return {
+                            id: item.id,
+                            name: item.name,
+                            description: item.description,
+                            url: item.url,
+                            status: item.status,
+                            preference: item.preference,
+                            isClaimedByMe
+                        };
+                    })
+                    .filter((item: any) => item.status === 'AVAILABLE' || item.isClaimedByMe);
+
+                return { id: list.id, name: list.name, slug: list.slug, imageUrl: list.imageUrl, items: publicItems };
+            });
+
+        res.json({ ownedLists, invitedLists });
     } catch (err) {
         next(err);
     }
@@ -126,7 +158,8 @@ export const deleteList = async (req: Request, res: Response, next: NextFunction
 export const createGuestAccess = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { slug } = req.params;
-        const { email, language } = req.body as GuestAccessInput;
+        const userId = (req as any).user.id;
+        const { language } = req.body;
 
         const list = await prisma.giftList.findUnique({ where: { slug, deletedAt: null } });
         if (!list) {
@@ -134,19 +167,9 @@ export const createGuestAccess = async (req: Request, res: Response, next: NextF
         }
 
         const access = await prisma.guestAccess.upsert({
-            where: { listId_email: { listId: list.id, email } },
+            where: { listId_userId: { listId: list.id, userId } },
             update: { language },
-            create: { listId: list.id, email, language }
-        });
-
-        const sessionPayload = Buffer.from(JSON.stringify({ id: access.id, email })).toString('base64');
-        console.log(`[Guest] Setting session cookie for ${email}, path: /`);
-        res.cookie('guest_session', sessionPayload, {
-            httpOnly: true,
-            secure: false, // Force false for local dev
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 30 * 24 * 60 * 60 * 1000,
+            create: { listId: list.id, userId, language }
         });
 
         res.json({ success: true });
@@ -158,7 +181,7 @@ export const createGuestAccess = async (req: Request, res: Response, next: NextF
 export const getListPublic = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { slug } = req.params;
-        const guestId = (req as any).guest.id;
+        const userId = (req as any).user.id;
 
         const list = await prisma.giftList.findFirst({
             where: { slug, deletedAt: null },
@@ -176,9 +199,13 @@ export const getListPublic = async (req: Request, res: Response, next: NextFunct
             throw { status: 404, code: ErrorCodes.LIST_NOT_FOUND, message: 'List not found' };
         }
 
+        const guestAccess = await prisma.guestAccess.findUnique({
+            where: { listId_userId: { listId: list.id, userId } }
+        });
+
         const publicItems = list.items
             .map((item: any) => {
-                const isClaimedByMe = item.claim?.guestId === guestId;
+                const isClaimedByMe = guestAccess ? item.claim?.guestId === guestAccess.id : false;
                 return {
                     id: item.id,
                     name: item.name,

@@ -37,7 +37,6 @@ export const CreateGiftItemSchema = z.object({
 export const UpdateGiftItemSchema = CreateGiftItemSchema.partial();
 
 export const GuestAccessSchema = z.object({
-    email: z.string().email('Invalid email address'),
     language: z.string().min(2).max(5).default('en'),
 });
 

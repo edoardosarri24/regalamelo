@@ -60,6 +60,7 @@ model User {
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   lists              GiftList[]
+  guestAccess        GuestAccess[]
 }
 
 model GiftList {
@@ -96,12 +97,13 @@ model GuestAccess {
   id        String       @id @default(uuid())
   listId    String
   list      GiftList     @relation(fields: [listId], references: [id])
-  email     String
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
   language  String       @default("en")
   claims    GuestClaim[]
   createdAt DateTime     @default(now())
 
-  @@unique([listId, email])
+  @@unique([listId, userId])
 }
 
 model GuestClaim {
@@ -137,13 +139,13 @@ To balance security and usability, the application implements a dual-token syste
     \item \textbf{Access Token (JWT)}: Short-lived (15 minutes). Sent in the \texttt{Authorization} header.
     \item \textbf{Refresh Token}: Long-lived (7 days). Stored in a \texttt{HttpOnly} cookie. In production, this cookie is marked as \texttt{Secure}.
 \end{itemize}
-When the Access Token expires, the frontend automatically calls a \texttt{POST /auth/refresh} endpoint, which verifies the Refresh Token and issues a new Access Token. This ensures that the Celebrant stays logged in while they are actively using the dashboard.
+When the Access Token expires, the frontend automatically calls a \texttt{POST /auth/refresh} endpoint, which verifies the Refresh Token and issues a new Access Token. This ensures that the user stays logged in while they are actively using the dashboard.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Data Model}
-The database schema is designed to support the relationships between Celebrants, Lists, and Guests.
+The database schema is designed to support the relationships between Users, Lists, and Guest Access.
 \begin{itemize}
-    \item User (Celebrant): Stores celebrant data.
+    \item User: Stores user authentication data.
         \begin{itemize}
             \item \texttt{id}: UUID, Primary Key
             \item \texttt{email}: String, unique, required
@@ -178,14 +180,14 @@ The database schema is designed to support the relationships between Celebrants,
             \item \texttt{createdAt}: Timestamp, default: now
             \item \texttt{updatedAt}: Timestamp, auto-update
         \end{itemize}
-    \item GuestAccess: Links a guest's email to a specific list for notification purposes.
+    \item GuestAccess: Links an authenticated User to a specific list for tracking and notification purposes.
         \begin{itemize}
             \item \texttt{id}: UUID, Primary Key
             \item \texttt{listId}: Foreign Key to GiftList
-            \item \texttt{email}: String, required
+            \item \texttt{userId}: Foreign Key to User
             \item \texttt{language}: String (e.g., 'en', 'it'), required. Used for notification emails.
             \item \texttt{createdAt}: Timestamp, default: now
-            \item A unique constraint should be on \texttt{(listId, email)}.
+            \item A unique constraint should be on \texttt{(listId, userId)}.
         \end{itemize}
     \item GuestClaim: A record linking a \texttt{GiftItem} to a \texttt{GuestAccess} record.
         \begin{itemize}
@@ -218,7 +220,7 @@ To guarantee a Single Source of Truth (SSOT) between the Frontend and Backend, v
 
 \subsubsection{Entity Rules}
 \begin{itemize}
-    \item User (Celebrant)
+    \item User
     \begin{itemize}
         \item \texttt{email}: Must be a syntactically valid email address.
         \item \texttt{password}: Must be at least 8 characters long and contain at least one uppercase letter and at least one number or special character.
@@ -237,7 +239,7 @@ To guarantee a Single Source of Truth (SSOT) between the Frontend and Backend, v
     \end{itemize}
     \item GuestAccess
     \begin{itemize}
-        \item \texttt{email}: Must be a syntactically valid email address.
+        \item \texttt{userId}: Must be a valid UUID corresponding to an existing User.
     \end{itemize}
 \end{itemize}
 
@@ -298,13 +300,13 @@ The following specific error codes are used to provide granular feedback to the 
     \item \texttt{500 Internal Server Error}: Unexpected server error.
 \end{itemize}
 
-\subsection{Authentication and Public Routes}
-These routes handle celebrant authentication and guest operations. All routes are prefixed with \texttt{/api/v1}.
+\subsection{Authentication Routes}
+These routes handle user authentication operations. All routes are prefixed with \texttt{/api/v1}.
 \begin{itemize}
     \item \texttt{POST /auth/register} \\
-    Registers a new Celebrant account.
+    Registers a new user account.
     \item \texttt{POST /auth/login} \\
-    Authenticates a Celebrant and returns a JWT.
+    Authenticates a user and returns a JWT.
     \item \texttt{POST /auth/logout} \\
     Clears session and refresh token cookies.
     \item \texttt{POST /auth/refresh} \\
@@ -313,10 +315,15 @@ These routes handle celebrant authentication and guest operations. All routes ar
     Initiates the password reset process. Sends an email with a reset token if the email exists.
     \item \texttt{POST /auth/reset-password} \\
     Sets a new password using a valid reset token.
+\end{itemize}
+
+\subsection{Protected Routes (Dashboard and Lists)}
+These require a valid JWT in the Authorization header.
+\begin{itemize}
     \item \texttt{POST /lists/:slug/access} \\
-    Registers or identifies a guest's email for a specific list. If the email already exists for this list, it refreshes the guest session.
-    \textbf{Payload}: \texttt{\{ "email": "guest@example.com", "language": "it" \}}.
-    The backend stores the email and sets a secure, \texttt{HttpOnly} session cookie.
+    Links an authenticated user to a specific list as a guest, making it accessible on their dashboard.
+    \textbf{Payload}: \texttt{\{ "language": "it" \}}.
+    The backend links the list to the authenticated user and sets their language preference.
     \item \texttt{GET /lists/:slug} \\
     Retrieves the gift list and all items. Requires a valid guest session. \textbf{Note:} For guests, this response includes the \texttt{status} of each item to show what is available.
     \item \texttt{GET /lists/:slug/my-claims} \\
@@ -331,7 +338,7 @@ These routes handle celebrant authentication and guest operations. All routes ar
 These require a valid JWT in the Authorization header.
 \begin{itemize}
     \item \texttt{GET /lists} \\
-        Retrieves all lists created by the authenticated Celebrant.
+        Retrieves all lists associated with the authenticated user, separated into \texttt{ownedLists} (created by them) and \texttt{invitedLists} (joined as a guest).
     \item \texttt{POST /lists} \\
         Creates a new list. Requires a \texttt{name}.
     \item \texttt{GET /lists/:slug/manage} \\
@@ -425,7 +432,6 @@ To ensure consistency between frontend and backend, we define the following Data
     \item \textbf{Guest Access Request}
 \begin{verbatim}
 {
-  "email": "guest@example.com",
   "language": "it"
 }
 \end{verbatim}
@@ -499,8 +505,8 @@ Sent when a celebrant removes an item that the guest has already claimed.
         \end{quote}
 \end{itemize}
 
-\subsection{Password Reset (Celebrant)}
-Sent when a celebrant requests a password recovery.
+\subsection{Password Reset}
+Sent when a user requests a password recovery.
 \begin{itemize}
     \item \textbf{Subject (EN)}: Password Reset Request for Gift List
     \item \textbf{Subject (IT)}: Richiesta di reset password per Gift List
