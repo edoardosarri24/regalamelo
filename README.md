@@ -1,6 +1,11 @@
 # Gift List
 A modern, self-hosted web application to manage and share gift wish lists. Designed to keep the surprise alive for the celebrant while ensuring guests don't buy duplicate gifts.
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Detailed technical documentation (LaTeX) is available in the `documentation/` directory, covering backend design, frontend architecture, and deployment strategies.
+
+
 ## Overview
 The **Gift List** application allows:
 - **Celebrants**: Create personalized wish lists, add items with descriptions and links, and share a unique link with friends. Claims are hidden from the celebrant to preserve the surprise.
@@ -25,32 +30,10 @@ The project is structured as a **PNPM Monorepo**:
 - **Frontend**: React, Vite, TypeScript, TanStack Query, Axios, React Hook Form, CSS Modules, **react-easy-crop** (Image Cropping), **heic2any** (HEIC conversion).
 - **Infrastructure**: Docker, Docker Compose, Nginx, Cloudflare Tunnels (for secure remote access).
 
-## Getting Started
-### Prerequisites
+## Prerequisites
 - [Node.js](https://nodejs.org/) (v24+)
 - [pnpm](https://pnpm.io/)
 - [Docker](https://www.docker.com/) (for containerized deployment)
-
-### Local Development
-1. **Install dependencies**:
-   ```bash
-   pnpm install
-   ```
-2. **Setup environment variables**:
-   Copy the example file and fill in your values (database URL, JWT secret, etc.):
-   ```bash
-   cp .env.example .env
-   ```
-3. **Database Migration**:
-   ```bash
-   cd apps/backend
-   npx prisma migrate dev
-   ```
-4. **Run in development mode**:
-   ```bash
-   pnpm dev
-   ```
-   *The frontend will be available at `http://localhost:5173` and the backend at `http://localhost:3000`.*
 
 ## Deployment with Docker
 The application is optimized for self-hosting (e.g., on a Raspberry Pi) using Docker Compose.
@@ -68,9 +51,3 @@ The application is optimized for self-hosting (e.g., on a Raspberry Pi) using Do
 - **`db`**: PostgreSQL 17 database.
 - **`db-backup`**: Automated daily database backups.
 - **`tunnel`**: Cloudflare Tunnel for secure external access without port forwarding.
-
-## Documentation
-Detailed technical documentation (LaTeX) is available in the `documentation/` directory, covering backend design, frontend architecture, and deployment strategies.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

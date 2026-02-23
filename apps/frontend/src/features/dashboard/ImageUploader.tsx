@@ -64,9 +64,19 @@ interface ImageUploaderProps {
     onSave: (base64Url: string) => void;
     onCancel: () => void;
     isLoading?: boolean;
+    shape?: 'round' | 'rect';
+    aspectRatio?: number;
+    title?: string;
 }
 
-export const ImageUploader = ({ onSave, onCancel, isLoading = false }: ImageUploaderProps) => {
+export const ImageUploader = ({
+    onSave,
+    onCancel,
+    isLoading = false,
+    shape = 'round',
+    aspectRatio = 1,
+    title = 'Modifica Immagine'
+}: ImageUploaderProps) => {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [originalUrl, setOriginalUrl] = useState('');
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -145,7 +155,7 @@ export const ImageUploader = ({ onSave, onCancel, isLoading = false }: ImageUplo
     return (
         <div style={{ padding: '24px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ margin: 0, fontSize: '18px' }}>Modifica Immagine Profilo</h3>
+                <h3 style={{ margin: 0, fontSize: '18px' }}>{title}</h3>
                 <button type="button" onClick={onCancel} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }}>
                     <X size={20} />
                 </button>
@@ -188,8 +198,8 @@ export const ImageUploader = ({ onSave, onCancel, isLoading = false }: ImageUplo
                             image={imageSrc}
                             crop={crop}
                             zoom={zoom}
-                            aspect={1}
-                            cropShape="round"
+                            aspect={aspectRatio}
+                            cropShape={shape}
                             showGrid={false}
                             onCropChange={setCrop}
                             onCropComplete={onCropComplete}

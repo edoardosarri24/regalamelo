@@ -46,11 +46,11 @@ To ensure a high-quality user experience and data integrity, form management fol
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Image Uploading and Processing}
-A critical feature of the dashboard is the ability for celebrants to customize their lists with a representative image. To ensure a premium user experience and server compatibility, image processing is handled entirely client-side before transmission:
+A critical feature of the dashboard is the ability for celebrants to customize their lists and individual gift items with representative images. To ensure a premium user experience and server compatibility, a reusable image processing component handles everything client-side before transmission:
 \begin{itemize}
     \item \textbf{Upload Methods}: Users can upload images via a native drag-and-drop file interface or by pasting an external image URL. 
     \item \textbf{HEIC Conversion}: Apple devices natively capture photos in \texttt{.heic} format. The frontend automatically intercepts these files and converts them to \texttt{.jpg} using \texttt{heic2any} directly in the browser, ensuring universal compatibility without backend overhead.
-    \item \textbf{Interactive Cropping}: Uploaded or URL-imported images are loaded onto an interactive 1:1 circular canvas using \texttt{react-easy-crop}, allowing the user to precisely frame and zoom the picture.
+    \item \textbf{Interactive Cropping}: Uploaded or URL-imported images are loaded onto an interactive canvas (e.g. 1:1 circular for lists, square or custom aspect ratio for items) using \texttt{react-easy-crop}, allowing the user to precisely frame and zoom the picture.
     \item \textbf{Data Transmission}: The final cropped image is generated as an optimized JPEG base64 Data URL, which is sent securely to the backend payload.
 \end{itemize}
 
@@ -209,6 +209,8 @@ The application will implement React Error Boundaries at the feature level. This
 \subsubsection{GiftCard Component}
 This is the core component for displaying a gift item. It has distinct visual states based on the item's status and the user's role.
 \begin{itemize}
+    \item Image Display \\
+        Displays the item's representative image. The UI should accommodate image absence gracefully with an appealing placeholder or fallback design.
     \item Available State \\
         Displays the item details and a prominent "Claim" button.
     \item Claimed by Current User \\

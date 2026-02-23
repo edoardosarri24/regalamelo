@@ -30,6 +30,7 @@ export const CreateGiftItemSchema = z.object({
     name: z.string().min(3, 'Name must be at least 3 characters').max(50, 'Name cannot exceed 50 characters'),
     description: z.string().max(200, 'Description cannot exceed 200 characters').optional().nullable(),
     url: z.string().url('Must be a valid URL').optional().nullable().or(z.literal('')),
+    imageUrl: z.string().optional().nullable().or(z.literal('')),
     preference: z.enum(['LOW', 'MEDIUM', 'HIGH']).default('MEDIUM'),
 });
 

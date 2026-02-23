@@ -18,6 +18,7 @@ export const addItemToList = async (req: Request, res: Response, next: NextFunct
                 name: data.name,
                 description: data.description || null,
                 url: data.url || null,
+                imageUrl: data.imageUrl || null,
                 preference: data.preference,
             }
         });
@@ -49,6 +50,7 @@ export const updateItem = async (req: Request, res: Response, next: NextFunction
                 name: data.name,
                 description: data.description,
                 url: data.url,
+                imageUrl: data.imageUrl,
                 preference: data.preference,
             }
         });

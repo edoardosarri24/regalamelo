@@ -83,6 +83,7 @@ model GiftItem {
   name        String
   description String?
   url         String?
+  imageUrl    String?
   status      ItemStatus      @default(AVAILABLE)
   preference  PreferenceLevel @default(MEDIUM)
   claim       GuestClaim?
@@ -170,6 +171,7 @@ The database schema is designed to support the relationships between Celebrants,
             \item \texttt{name}: String, required
             \item \texttt{description}: Text, optional
             \item \texttt{url}: String, optional
+            \item \texttt{imageUrl}: String, optional. Base64 profile image or remote URL.
             \item \texttt{status}: Enum (\texttt{AVAILABLE}, \texttt{CLAIMED}), required, default: \texttt{AVAILABLE}
             \item \texttt{preference}: Enum (\texttt{LOW}, \texttt{MEDIUM}, \texttt{HIGH}), required, default: \texttt{MEDIUM}
             \item \texttt{deletedAt}: Timestamp, optional (Soft delete)
@@ -230,6 +232,7 @@ To guarantee a Single Source of Truth (SSOT) between the Frontend and Backend, v
     \begin{itemize}
         \item \texttt{name}: Must be between 3 and 50 characters long.
         \item \texttt{url}: If provided, must be a valid URL format.
+        \item \texttt{imageUrl}: Optional. If provided, must be a valid base64 data URL string or standard URL.
         \item \texttt{description}: Optional. If provided, it must not exceed 200 characters.
     \end{itemize}
     \item GuestAccess
@@ -391,6 +394,7 @@ To ensure consistency between frontend and backend, we define the following Data
       "name": "Mechanical Keyboard",
       "description": "Blue switches preferred",
       "url": "https://amazon.com/...",
+      "imageUrl": "data:image/jpeg;base64,...",
       "status": "AVAILABLE",
       "preference": "HIGH",
       "isClaimedByMe": false
@@ -404,6 +408,7 @@ To ensure consistency between frontend and backend, we define the following Data
   "name": "Lego Star Wars",
   "description": "The Millennium Falcon set",
   "url": "https://lego.com/...",
+  "imageUrl": "data:image/jpeg;base64,...",
   "preference": "MEDIUM"
 }
 \end{verbatim}
@@ -413,6 +418,7 @@ To ensure consistency between frontend and backend, we define the following Data
   "name": "Updated Lego Set",
   "description": "Updated description",
   "url": "https://new-url.com",
+  "imageUrl": "data:image/jpeg;base64,...",
   "preference": "HIGH"
 }
 \end{verbatim}

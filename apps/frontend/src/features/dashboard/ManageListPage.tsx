@@ -18,6 +18,10 @@ export const ManageListPage = () => {
     const [copied, setCopied] = useState(false);
     const [isEditingImage, setIsEditingImage] = useState(false);
 
+    // Add Item Image State
+    const [newItemImage, setNewItemImage] = useState<string | null>(null);
+    const [isAddingItemImage, setIsAddingItemImage] = useState(false);
+
     const { data: list, isLoading } = useQuery({
         queryKey: ['manage-list', slug],
         queryFn: async () => {
@@ -44,8 +48,17 @@ export const ManageListPage = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['manage-list', slug] });
             reset();
+            setNewItemImage(null);
             setShowAddForm(false);
         }
+    });
+
+    const onSubmitNewItem = handleSubmit((data: any) => {
+        const payload = { ...data };
+        if (newItemImage) {
+            payload.imageUrl = newItemImage;
+        }
+        addItemMutation.mutate(payload);
     });
 
     const deleteItemMutation = useMutation({
@@ -124,22 +137,56 @@ export const ManageListPage = () => {
             {showAddForm && (
                 <Card style={{ marginBottom: '32px' }}>
                     <h3>Aggiungi Nuovo Regalo</h3>
-                    <form onSubmit={handleSubmit((data: any) => addItemMutation.mutate(data))} style={{ marginTop: '16px' }}>
-                        <Input label="Nome" placeholder="es. Nintendo Switch" {...register('name')} error={errors.name?.message} />
-                        <Input label="Descrizione (Opzionale)" placeholder="Dettagli specifici" {...register('description')} error={errors.description?.message} />
-                        <Input label="URL (Opzionale)" placeholder="https://..." {...register('url')} error={errors.url?.message} />
 
-                        <div style={{ marginBottom: '16px' }}>
-                            <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', fontWeight: 500 }}>Preferenza</label>
-                            <select {...register('preference')} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', width: '100%' }}>
-                                <option value="LOW">Bassa</option>
-                                <option value="MEDIUM">Media</option>
-                                <option value="HIGH">Alta</option>
-                            </select>
+                    {isAddingItemImage ? (
+                        <div style={{ marginTop: '16px' }}>
+                            <ImageUploader
+                                shape="rect"
+                                aspectRatio={1}
+                                title="Immagine Regalo"
+                                onSave={(url) => {
+                                    setNewItemImage(url);
+                                    setIsAddingItemImage(false);
+                                }}
+                                onCancel={() => setIsAddingItemImage(false)}
+                            />
                         </div>
+                    ) : (
+                        <form onSubmit={onSubmitNewItem} style={{ marginTop: '16px' }}>
+                            <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                <div style={{ width: '80px', height: '80px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0, background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {newItemImage ? (
+                                        <img src={newItemImage} alt="Regalo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <span style={{ color: 'var(--color-text-secondary)', fontSize: '10px', textAlign: 'center' }}>Nessuna foto</span>
+                                    )}
+                                </div>
+                                <Button type="button" variant="outline" onClick={() => setIsAddingItemImage(true)}>
+                                    {newItemImage ? 'Modifica Foto' : 'Aggiungi Foto'}
+                                </Button>
+                                {newItemImage && (
+                                    <Button type="button" variant="secondary" onClick={() => setNewItemImage(null)}>
+                                        Rimuovi
+                                    </Button>
+                                )}
+                            </div>
 
-                        <Button type="submit" isLoading={isSubmitting || addItemMutation.isPending}>Salva Regalo</Button>
-                    </form>
+                            <Input label="Nome" placeholder="es. Nintendo Switch" {...register('name')} error={errors.name?.message} />
+                            <Input label="Descrizione (Opzionale)" placeholder="Dettagli specifici" {...register('description')} error={errors.description?.message} />
+                            <Input label="URL (Opzionale)" placeholder="https://..." {...register('url')} error={errors.url?.message} />
+
+                            <div style={{ marginBottom: '16px' }}>
+                                <label style={{ display: 'block', fontSize: '14px', marginBottom: '4px', fontWeight: 500 }}>Preferenza</label>
+                                <select {...register('preference')} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc', width: '100%' }}>
+                                    <option value="LOW">Bassa</option>
+                                    <option value="MEDIUM">Media</option>
+                                    <option value="HIGH">Alta</option>
+                                </select>
+                            </div>
+
+                            <Button type="submit" isLoading={isSubmitting || addItemMutation.isPending}>Salva Regalo</Button>
+                        </form>
+                    )}
                 </Card>
             )}
 
@@ -153,11 +200,20 @@ export const ManageListPage = () => {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         {list.items.map((item: any) => (
-                            <Card key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
-                                <div style={{ minWidth: 0, flex: 1 }}>
-                                    <h4 style={{ margin: 0, wordBreak: 'break-word' }}>{item.name} <span style={{ fontSize: '12px', fontWeight: 'normal', color: 'gray' }}>({item.preference === 'LOW' ? 'Bassa' : item.preference === 'MEDIUM' ? 'Media' : 'Alta'})</span></h4>
-                                    {item.description && <p style={{ fontSize: '14px', marginTop: '4px', wordBreak: 'break-word' }}>{item.description}</p>}
-                                    {item.url && <a href={item.url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', wordBreak: 'break-all', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>Link</a>}
+                            <Card key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                                <div style={{ display: 'flex', gap: '16px', flex: 1, minWidth: 0 }}>
+                                    <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '1px solid var(--color-border)', flexShrink: 0, background: 'var(--color-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        {item.imageUrl ? (
+                                            <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        ) : (
+                                            <span style={{ color: 'var(--color-text-secondary)', fontSize: '10px', textAlign: 'center' }}>No foto</span>
+                                        )}
+                                    </div>
+                                    <div style={{ minWidth: 0, flex: 1 }}>
+                                        <h4 style={{ margin: 0, wordBreak: 'break-word' }}>{item.name} <span style={{ fontSize: '12px', fontWeight: 'normal', color: 'gray' }}>({item.preference === 'LOW' ? 'Bassa' : item.preference === 'MEDIUM' ? 'Media' : 'Alta'})</span></h4>
+                                        {item.description && <p style={{ fontSize: '14px', marginTop: '4px', wordBreak: 'break-word' }}>{item.description}</p>}
+                                        {item.url && <a href={item.url} target="_blank" rel="noreferrer" style={{ fontSize: '14px', wordBreak: 'break-all', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>Link</a>}
+                                    </div>
                                 </div>
                                 <button
                                     onClick={() => { if (window.confirm('Sei sicuro?')) deleteItemMutation.mutate(item.id as string) }}
