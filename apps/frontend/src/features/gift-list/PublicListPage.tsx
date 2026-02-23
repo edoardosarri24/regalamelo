@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, Navigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '../../components/Input';
@@ -82,6 +83,27 @@ export const PublicListPage = () => {
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
+            {list && (
+                <Helmet>
+                    <title>{list.customName || list.name} | GiftBox</title>
+                    <meta name="description" content={`Scopri la lista regali di ${list.customName || list.name} su GiftBox.`} />
+                    <script type="application/ld+json">
+                        {JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "ItemList",
+                            "name": list.customName || list.name,
+                            "description": `Lista regali di ${list.customName || list.name}`,
+                            "itemListElement": list.items.map((item: any, index: number) => ({
+                                "@type": "ListItem",
+                                "position": index + 1,
+                                "name": item.name,
+                                "description": item.description || "",
+                                "url": item.url || ""
+                            }))
+                        })}
+                    </script>
+                </Helmet>
+            )}
             <div style={{ marginBottom: '24px' }}>
                 <Link to="/dashboard" style={{ textDecoration: 'none' }}>
                     <Button variant="outline" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

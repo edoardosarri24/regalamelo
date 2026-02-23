@@ -1,4 +1,5 @@
 import { useAuth } from '../../hooks/useAuth';
+import { Helmet } from 'react-helmet-async';
 import { Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../lib/axios';
@@ -108,6 +109,10 @@ export const DashboardPage = () => {
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
+            <Helmet>
+                <title>{t('dashboardTitle')} | GiftBox</title>
+                <meta name="robots" content="noindex" />
+            </Helmet>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
                 <h1>{t('dashboardTitle')}</h1>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>

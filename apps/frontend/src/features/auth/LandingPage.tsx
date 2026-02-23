@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
 import { useAuth } from '../../hooks/useAuth';
@@ -22,6 +23,10 @@ export const LandingPage = () => {
 
     return (
         <div className={styles.landing}>
+            <Helmet>
+                <title>{t('landingTitle')}</title>
+                <meta name="description" content={t('landingSubtitle')} />
+            </Helmet>
             <LanguageToggle absolute />
             <h1 className={styles.title}>{t('landingTitle')}</h1>
             <p className={styles.subtitle}>{t('landingSubtitle')}</p>

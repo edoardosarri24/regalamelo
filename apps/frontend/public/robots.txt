@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://giftbox.edoardosarri.com/sitemap.xml

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -30,6 +31,10 @@ export const GuestAccessPage = () => {
 
     return (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
+            <Helmet>
+                <title>Accesso Ospite | GiftBox</title>
+                <meta name="robots" content="noindex" />
+            </Helmet>
             <div style={{ width: '100%', maxWidth: '400px', padding: '24px' }}>
                 <Card>
                     <h2 style={{ textAlign: 'center', marginBottom: '16px' }}>Accedi alla Lista Regali</h2>

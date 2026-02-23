@@ -278,3 +278,21 @@ Since guests do not have a traditional account, their identity is tracked via a 
     \item \textbf{Persistence} \\
         The session is tied to the browser. If a guest returns to the same list from the same browser, they will automatically see their claimed items highlighted. If the cookie is expired, the guest simply needs to re-enter their email on the access page to restore their session.
 \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Search Engine Optimization (SEO)}
+To ensure maximum visibility for the application, a comprehensive SEO strategy is implemented, balancing the nature of a Single Page Application (SPA) with search engine requirements.
+
+\begin{itemize}
+    \item \textbf{Static SEO Foundation} \\
+        Basic indexing is supported through static files in the \texttt{public} directory:
+        \begin{itemize}
+            \item \texttt{robots.txt}: Defines crawler access rules.
+            \item \texttt{sitemap.xml}: Lists public routes for faster indexing.
+            \item \textbf{Meta Tags \& Open Graph}: The \texttt{index.html} includes foundational \texttt{<meta>} tags, canonical links, and Open Graph properties to ensure rich previews when links are shared on social platforms.
+        \end{itemize}
+    \item \textbf{Dynamic SEO with React Helmet Async} \\
+        Since React applications do not reload the page on navigation, dynamic metadata injection is required. \texttt{react-helmet-async} is utilized to dynamically update the \texttt{<title>}, \texttt{<meta name="description">}, and other relevant tags based on the current component (e.g., setting the title to a specific list's name: "Marco's Gift List | GiftBox").
+    \item \textbf{Structured Data (JSON-LD)} \\
+        For public-facing pages, JSON-LD scripts are injected to provide search engines with machine-readable context, increasing the likelihood of rich search results.
+\end{itemize}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CreateGiftListInput, CreateGiftListSchema } from '@gift-list/shared';
@@ -33,6 +34,10 @@ export const CreateListForm = () => {
 
     return (
         <div style={{ maxWidth: '600px', margin: '48px auto', padding: '0 24px' }}>
+            <Helmet>
+                <title>Crea Nuova Lista | GiftBox</title>
+                <meta name="robots" content="noindex" />
+            </Helmet>
             <div style={{ marginBottom: '24px' }}>
                 <Link to="/dashboard" style={{ textDecoration: 'none', color: 'var(--color-primary)' }}>
                     ← Torna alla Dashboard

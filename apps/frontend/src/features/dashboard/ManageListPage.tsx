@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -202,6 +203,10 @@ export const ManageListPage = () => {
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
+            <Helmet>
+                <title>Gestisci {list.name} | GiftBox</title>
+                <meta name="robots" content="noindex" />
+            </Helmet>
             <div style={{ marginBottom: '24px' }}>
                 <Link to="/dashboard" style={{ textDecoration: 'none', color: 'var(--color-primary)' }}>
                     ← Torna alla Dashboard
