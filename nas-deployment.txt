@@ -5,7 +5,7 @@ services:
     image: ghcr.io/edoardosarri24/gift-list-frontend:main
     restart: always
     environment:
-      - VITE_API_BASE_URL=https://liste.edoardosarri.com/api/v1
+      - VITE_API_BASE_URL=https://giftbox.edoardosarri.com/api/v1
     logging:
       driver: "json-file"
       options:
@@ -18,9 +18,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://giftlistuser:miaPasswordSicura@db:5432/giftlistdb
       - PORT=3000
-      - CORS_ORIGIN=https://liste.edoardosarri.com
-      # --- ECCO LA PARTE CHE CAMBIA ---
-      # INSERISCI DI SEGUITO DIRETTAMENTE I TUOI VALORI VERI
+      - CORS_ORIGIN=https://giftbox.edoardosarri.com
       - JWT_SECRET=DquWtjmyokZOHxXCr6HGYiu/N6k3P+6Z
       - SMTP_HOST=localhost
       - SMTP_PORT=465
@@ -38,7 +36,7 @@ services:
     image: postgres:17-alpine
     restart: always
     volumes:
-      - NAS_DATABASE_DATA_V2:/var/lib/postgresql/data
+      - NAS_DATABASE_DATA_V3:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=giftlistdb
       - POSTGRES_USER=giftlistuser
@@ -52,11 +50,8 @@ services:
   tunnel:
     image: cloudflare/cloudflared:latest
     restart: always
-    # --- CAMBIA ANCHE QUESTA PARTE ---
-    # Elimina "--token ${CLOUDFLARE_TOKEN}" e invece usa la variabile d'ambiente ufficiale
     command: tunnel run
     environment:
-      # Sostituisci la scritta qui sotto con il token vero che inizia con eyJh...
       - TUNNEL_TOKEN=eyJhIjoiNjAxZGFlNDk1ODM0NzUyMjU4NjYwMzMwMWFiZGFlOTMiLCJ0IjoiNTY5YWI0NGYtZjA2My00ZGUzLTg3N2MtNWViZDg0MjlhZGQzIiwicyI6Ill6azRORE00WTJFdFltTmhOQzAwTUdVMkxXSXlORGt0TnpZM09EaGxOR0l6T1RWbCJ9
     depends_on:
       - frontend
@@ -70,4 +65,4 @@ services:
     command: --interval 300 frontend api
 
 volumes:
-  NAS_DATABASE_DATA_V2:
+  NAS_DATABASE_DATA_V3:
