@@ -117,27 +117,27 @@ model GuestClaim {
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Configuration}
-The application is configured using environment variables. These variables are essential for both development and production environments. It is recommended to create a \texttt{.env.example} file in the project root to serve as a template.
+The application is configured using environment variables. These variables are managed within the Docker environment (e.g., in the \texttt{docker-compose.yml} or an \texttt{.env} file loaded by Docker).
 
 \begin{itemize}
     \item \texttt{DATABASE\_URL} \\
-        The connection string for the PostgreSQL database, used by Prisma. \\
-        Example: \texttt{postgresql://user:password@localhost:5432/giftlist}
+        The connection string for the PostgreSQL database, used by Prisma. In the Docker stack, the host is usually the service name (e.g., \texttt{db}). \\
+        Example: \texttt{postgresql://user:password@db:5432/giftlist}
     \item \texttt{JWT\_SECRET} \\
-        A long, random, and secret string for signing and verifying JSON Web Tokens. This must be kept private.
+        A long, random, and secret string for signing and verifying JSON Web Tokens.
     \item \texttt{PORT} \\
-        The port for the Node.js server. Defaults to \texttt{3000} if not specified.
+        The port for the Node.js server within the container. Defaults to \texttt{3000}.
     \item \texttt{CORS\_ORIGIN} \\
-        The URL of the frontend application allowed to access the API, to enforce Cross-Origin Resource Sharing (CORS) policies.
+        The URL of the frontend application (or the public domain) allowed to access the API.
     \item \texttt{SMTP\_HOST}, \texttt{SMTP\_PORT}, \texttt{SMTP\_USER}, \texttt{SMTP\_PASS} \\
-        Credentials for the SMTP server (used by Nodemailer) to send email notifications.
+        Credentials for the SMTP server.
 \end{itemize}
 
 \subsection{Authentication Strategy: Access \& Refresh Tokens}
 To balance security and usability, the application implements a dual-token system:
 \begin{itemize}
     \item \textbf{Access Token (JWT)}: Short-lived (15 minutes). Sent in the \texttt{Authorization} header.
-    \item \textbf{Refresh Token}: Long-lived (7 days). Stored in a \texttt{HttpOnly} cookie. In production, this cookie is marked as \texttt{Secure}.
+    \item \textbf{Refresh Token}: Long-lived (7 days). Stored in a \texttt{HttpOnly} cookie. In production (Docker deployment), this cookie is marked as \texttt{Secure}.
 \end{itemize}
 When the Access Token expires, the frontend automatically calls a \texttt{POST /auth/refresh} endpoint, which verifies the Refresh Token and issues a new Access Token. This ensures that the user stays logged in while they are actively using the dashboard.
 

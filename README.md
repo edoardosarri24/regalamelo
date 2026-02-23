@@ -31,19 +31,17 @@ The project is structured as a **PNPM Monorepo**:
 - **Infrastructure**: Docker, Docker Compose, Nginx, Cloudflare Tunnels (for secure remote access).
 
 ## Prerequisites
-- [Node.js](https://nodejs.org/) (v24+)
-- [pnpm](https://pnpm.io/)
 - [Docker](https://www.docker.com/) (for containerized deployment)
 
 ## Deployment with Docker
-The application is optimized for self-hosting (e.g., on a Raspberry Pi) using Docker Compose.
+The application is designed to be deployed exclusively using Docker and Docker Compose. This ensures a consistent environment across all platforms.
 1. **Build and start the stack**:
    ```bash
    docker compose up -d --build
    ```
 2. **Access the app**:
-   - **Frontend**: `http://localhost` (mapped to port 80)
-   - **Backend API**: `http://localhost/api/v1` (proxied via Nginx) or `http://localhost:3000/api/v1` (direct)
+   - **Main UI**: `http://localhost` (mapped to port 80)
+   - **Backend API**: `http://localhost/api/v1` (proxied via Nginx)
 
 ### Included Services:
 - **`frontend`**: Nginx serving the React build.
