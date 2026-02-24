@@ -127,23 +127,44 @@ export const DashboardPage = () => {
                 </div>
             </div>
 
-            <div style={{ marginBottom: '24px', display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-                <Link to="/dashboard/new" style={{ textDecoration: 'none' }}>
-                    <Button variant="primary">{t('createNewList')}</Button>
-                </Link>
-                <form onSubmit={handleJoin} style={{ display: 'flex', gap: '8px', flex: 1, minWidth: '300px' }}>
-                    <div style={{ flex: 1 }}>
-                        <Input
-                            value={joinInput}
-                            onChange={(e) => setJoinInput(e.target.value)}
-                            placeholder={t('joinListInput')}
-                            error={joinError}
-                        />
-                    </div>
-                    <Button type="submit" variant="outline" isLoading={isJoining} style={{ height: '42px' }}>
-                        {t('joinListButton')}
-                    </Button>
-                </form>
+            <div style={{ 
+                marginBottom: '40px', 
+                display: 'flex', 
+                gap: '24px', 
+                flexWrap: 'wrap',
+                backgroundColor: 'var(--color-surface)',
+                padding: '24px',
+                borderRadius: 'var(--radius-lg)',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                border: '1px solid rgba(0,0,0,0.05)',
+                alignItems: 'center'
+            }}>
+                <div style={{ flex: 1, minWidth: '200px' }}>
+                    <h3 style={{ marginBottom: '12px', fontSize: '1.1rem' }}>{t('createNewList')}</h3>
+                    <Link to="/dashboard/new" style={{ textDecoration: 'none', display: 'block' }}>
+                        <Button variant="primary" style={{ width: '100%' }}>+ {t('createNewList')}</Button>
+                    </Link>
+                </div>
+                
+                <div style={{ width: '1px', height: '60px', backgroundColor: 'var(--color-border)', margin: '0 12px', display: 'none' }} className="desktop-divider"></div>
+
+                <div style={{ flex: 2, minWidth: '300px' }}>
+                    <h3 style={{ marginBottom: '12px', fontSize: '1.1rem' }}>{t('joinListButton')}</h3>
+                    <form onSubmit={handleJoin} style={{ display: 'flex', gap: '12px' }}>
+                        <div style={{ flex: 1 }}>
+                            <Input
+                                value={joinInput}
+                                onChange={(e) => setJoinInput(e.target.value)}
+                                placeholder={t('joinListInput')}
+                                error={joinError}
+                                style={{ margin: 0 }}
+                            />
+                        </div>
+                        <Button type="submit" variant="outline" isLoading={isJoining} style={{ height: '45px' }}>
+                            {t('joinListButton')}
+                        </Button>
+                    </form>
+                </div>
             </div>
 
             {isLoading ? (
@@ -151,9 +172,12 @@ export const DashboardPage = () => {
             ) : lists && (lists.ownedLists.length > 0 || lists.invitedLists.length > 0) ? (
                 <div>
                     {lists.ownedLists.length > 0 && (
-                        <div style={{ marginBottom: '32px' }}>
-                            <h2 style={{ marginBottom: '16px' }}>{t('myLists')}</h2>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
+                        <div style={{ marginBottom: '48px', paddingBottom: '32px', borderBottom: '1px solid var(--color-border)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px', gap: '12px' }}>
+                                <div style={{ width: '4px', height: '24px', backgroundColor: 'var(--color-primary)', borderRadius: '4px' }}></div>
+                                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600' }}>{t('myLists')}</h2>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '20px' }}>
                                 {lists.ownedLists.map(list => (
                                     <Card key={list.id}>
                                         <h3>{list.name}</h3>
@@ -170,9 +194,12 @@ export const DashboardPage = () => {
                     )}
 
                     {lists.invitedLists.length > 0 && (
-                        <div>
-                            <h2 style={{ marginBottom: '16px' }}>{t('invitedLists')}</h2>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '16px' }}>
+                        <div style={{ marginBottom: '48px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px', gap: '12px' }}>
+                                <div style={{ width: '4px', height: '24px', backgroundColor: 'var(--color-secondary)', borderRadius: '4px' }}></div>
+                                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600' }}>{t('invitedLists')}</h2>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '20px' }}>
                                 {lists.invitedLists.map(list => (
                                     <EditingCard key={list.id} list={list} />
                                 ))}

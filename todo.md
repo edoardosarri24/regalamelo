@@ -1,5 +1,6 @@
-- dati server mail per mandare mail che è già tutto preimpostato.
+- controllo seo se ok
+- fare mail
+- recupero password con mail
+- controllo mail alla registrazione.
 - cosigli sull'app da parte degli utenti.
-- nome app e repo
-- home page
-- controllo mail
+- grafica app
