@@ -5,7 +5,7 @@ services:
     image: ghcr.io/edoardosarri24/gift-list-frontend:main
     restart: always
     environment:
-      - VITE_API_BASE_URL=https://giftbox.edoardosarri.com/api/v1
+      - VITE_API_BASE_URL=https://giftlyst.edoardosarri.com/api/v1
     logging:
       driver: "json-file"
       options:
@@ -18,7 +18,7 @@ services:
     environment:
       - DATABASE_URL=postgresql://giftlistuser:miaPasswordSicura@db:5432/giftlistdb
       - PORT=3000
-      - CORS_ORIGIN=https://giftbox.edoardosarri.com
+      - CORS_ORIGIN=https://giftlyst.edoardosarri.com
       - JWT_SECRET=DquWtjmyokZOHxXCr6HGYiu/N6k3P+6Z
       - SMTP_HOST=localhost
       - SMTP_PORT=465
@@ -36,7 +36,7 @@ services:
     image: postgres:17-alpine
     restart: always
     volumes:
-      - NAS_DATABASE_DATA_V3:/var/lib/postgresql/data
+      - NAS_DATABASE_DATA:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=giftlistdb
       - POSTGRES_USER=giftlistuser
@@ -65,4 +65,4 @@ services:
     command: --interval 300 frontend api
 
 volumes:
-  NAS_DATABASE_DATA_V3:
+  NAS_DATABASE_DATA:

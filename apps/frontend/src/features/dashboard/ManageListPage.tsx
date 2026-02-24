@@ -204,7 +204,7 @@ export const ManageListPage = () => {
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
             <Helmet>
-                <title>Gestisci {list.name} | GiftBox</title>
+                <title>Gestisci {list.name} | Giftlyst</title>
                 <meta name="robots" content="noindex" />
             </Helmet>
             <div style={{ marginBottom: '24px' }}>

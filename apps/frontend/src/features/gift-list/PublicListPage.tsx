@@ -85,8 +85,8 @@ export const PublicListPage = () => {
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
             {list && (
                 <Helmet>
-                    <title>{list.customName || list.name} | GiftBox</title>
-                    <meta name="description" content={`Scopri la lista regali di ${list.customName || list.name} su GiftBox.`} />
+                    <title>{list.customName || list.name} | Giftlyst</title>
+                    <meta name="description" content={`Scopri la lista regali di ${list.customName || list.name} su Giftlyst.`} />
                     <script type="application/ld+json">
                         {JSON.stringify({
                             "@context": "https://schema.org",
