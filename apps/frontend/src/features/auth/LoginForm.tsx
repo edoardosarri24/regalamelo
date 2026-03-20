@@ -34,6 +34,8 @@ export const LoginForm = ({ onToggle }: { onToggle: () => void }) => {
 
                 if (status === 401) {
                     setServerError('Credenziali non valide. Controlla email e password.');
+                } else if (status === 403 && err.response.data?.error?.code === 'AUTH_EMAIL_NOT_VERIFIED') {
+                    setServerError('Devi prima verificare la tua email. Controlla la casella di posta.');
                 } else if (status >= 400 && status < 500) {
                     setServerError(message || 'Dati non validi. Riprova.');
                 } else {

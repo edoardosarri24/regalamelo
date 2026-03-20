@@ -16,6 +16,10 @@ export const LoginUserSchema = z.object({
     password: z.string().min(1, 'Password is required'),
 });
 
+export const VerifyEmailSchema = z.object({
+    token: z.string().min(1, 'Token is required'),
+});
+
 export const CreateGiftListSchema = z.object({
     name: z.string().min(3, 'Name must be at least 3 characters').max(50, 'Name cannot exceed 50 characters'),
     imageUrl: z.string().optional().nullable().or(z.literal('')),
@@ -47,6 +51,7 @@ export const UpdateGuestAccessNameSchema = z.object({
 // Infer types
 export type RegisterUserInput = z.infer<typeof RegisterUserSchema>;
 export type LoginUserInput = z.infer<typeof LoginUserSchema>;
+export type VerifyEmailInput = z.infer<typeof VerifyEmailSchema>;
 export type CreateGiftListInput = z.infer<typeof CreateGiftListSchema>;
 export type UpdateGiftListInput = z.infer<typeof UpdateGiftListSchema>;
 export type CreateGiftItemInput = z.infer<typeof CreateGiftItemSchema>;

@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../utils/prisma';
 import { RegisterUserInput, LoginUserInput, ErrorCodes } from '@gift-list/shared';
+import crypto from 'crypto';
+import { sendVerificationEmail } from '../services/email.service';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretfallback';
 
@@ -22,15 +24,48 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
         }
 
         const hashedPassword = await bcrypt.hash(data.password, 10);
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
         const user = await prisma.user.create({
             data: {
                 email: data.email,
                 password: hashedPassword,
+                verificationToken,
+                verificationTokenExpires,
             },
         });
 
-        const { accessToken, refreshToken } = generateTokens(user);
+        await sendVerificationEmail(user.email, verificationToken);
+
+        res.status(201).json({ message: 'Registration successful. Please check your email to verify your account.' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { token } = req.body;
+        if (!token) {
+            throw { status: 400, code: ErrorCodes.VALIDATION_ERROR, message: 'Token is required' };
+        }
+
+        const user = await prisma.user.findUnique({ where: { verificationToken: token } });
+        if (!user || !user.verificationTokenExpires || user.verificationTokenExpires < new Date()) {
+            throw { status: 401, code: ErrorCodes.AUTH_TOKEN_EXPIRED, message: 'Invalid or expired verification token' };
+        }
+
+        const userUpdated = await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                isVerified: true,
+                verificationToken: null,
+                verificationTokenExpires: null,
+            },
+        });
+
+        const { accessToken, refreshToken } = generateTokens(userUpdated);
 
         await prisma.user.update({
             where: { id: user.id },
@@ -39,12 +74,12 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
-            secure: false, // Set to false for local dev flexibility
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-        res.json({ token: accessToken, user: { id: user.id, email: user.email } });
+        res.json({ token: accessToken, user: { id: userUpdated.id, email: userUpdated.email } });
     } catch (err) {
         next(err);
     }
@@ -62,6 +97,10 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         const isValid = await bcrypt.compare(data.password, user.password);
         if (!isValid) {
             throw { status: 401, code: ErrorCodes.AUTH_INVALID_CREDENTIALS, message: 'Invalid credentials' };
+        }
+
+        if (!user.isVerified) {
+            throw { status: 403, code: ErrorCodes.AUTH_EMAIL_NOT_VERIFIED, message: 'Please verify your email address' };
         }
 
         const { accessToken, refreshToken } = generateTokens(user);

@@ -70,3 +70,83 @@ export const sendClaimedItemRemovalNotification = async (
         console.error(`[Email Server] Failed to send email to ${guestEmail}:`, error);
     }
 };
+
+export const sendVerificationEmail = async (
+    email: string,
+    token: string,
+    language: string = 'en'
+): Promise<void> => {
+    try {
+        const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FRONTEND_URL } = process.env;
+        
+        // This is safe fallback if FRONTEND_URL is missing
+        const baseUrl = FRONTEND_URL || 'http://localhost:5173';
+        const verifyUrl = `${baseUrl}/verify-email?token=${token}`;
+
+        if (!SMTP_HOST || SMTP_HOST === 'localhost' || SMTP_HOST === 'mock') {
+            console.log(`[Email Mock] Verification email skipped for ${email}. SMTP_HOST is not configured with a real server.`);
+            console.log(`Testo previsto:\nVerify URL: ${verifyUrl}`);
+            return;
+        }
+
+        const transporter = nodemailer.createTransport({
+            host: SMTP_HOST,
+            port: Number(SMTP_PORT) || 587,
+            secure: Number(SMTP_PORT) === 465,
+            auth: {
+                user: SMTP_USER,
+                pass: SMTP_PASS,
+            },
+        });
+
+        const subject = language === 'it' 
+            ? 'Verifica il tuo account Gift List' 
+            : 'Verify your Gift List account';
+
+        const text = language === 'it'
+            ? `Ciao,\n\nBenvenuto in Gift List! Per attivare il tuo account e iniziare a creare liste desideri, clicca sul link seguente:\n\n${verifyUrl}\n\nGrazie!`
+            : `Hi,\n\nWelcome to Gift List! To activate your account and start creating your wish lists, please verify your email address by clicking the link below:\n\n${verifyUrl}\n\nThank you!`;
+
+        const html = language === 'it'
+            ? `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+                    <h2 style="color: #007AFF;">Benvenuto in Gift List</h2>
+                    <p>Ciao,</p>
+                    <p>Per attivare il tuo account e iniziare a creare liste desideri, verifica il tuo indirizzo email cliccando sul link qui sotto:</p>
+                    <div style="margin: 30px 0;">
+                        <a href="${verifyUrl}" style="background-color: #007AFF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Verifica Email</a>
+                    </div>
+                    <p style="color: #666; font-size: 12px;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:<br/>${verifyUrl}</p>
+                    <br/>
+                    <p>Grazie,</p>
+                    <p><strong>Gift List</strong></p>
+                </div>
+            `
+            : `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
+                    <h2 style="color: #007AFF;">Welcome to Gift List</h2>
+                    <p>Hi,</p>
+                    <p>To activate your account and start creating your wish lists, please verify your email address by clicking the link below:</p>
+                    <div style="margin: 30px 0;">
+                        <a href="${verifyUrl}" style="background-color: #007AFF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Verify Email</a>
+                    </div>
+                    <p style="color: #666; font-size: 12px;">If the button doesn't work, copy and paste this link into your browser:<br/>${verifyUrl}</p>
+                    <br/>
+                    <p>Thank you,</p>
+                    <p><strong>Gift List</strong></p>
+                </div>
+            `;
+
+        await transporter.sendMail({
+            from: `"Gift List" <${SMTP_USER}>`,
+            to: email,
+            subject,
+            text,
+            html,
+        });
+
+        console.log(`[Email Server] Verification email sent successfully to: ${email}`);
+    } catch (error) {
+        console.error(`[Email Server] Failed to send verification email to ${email}:`, error);
+    }
+};

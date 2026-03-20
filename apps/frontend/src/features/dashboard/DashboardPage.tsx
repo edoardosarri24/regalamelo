@@ -110,7 +110,7 @@ export const DashboardPage = () => {
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
             <Helmet>
-                <title>{t('dashboardTitle')} | Giftlyst</title>
+                <title>{t('dashboardTitle')} | Compralo</title>
                 <meta name="robots" content="noindex" />
             </Helmet>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>

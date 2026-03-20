@@ -51,16 +51,19 @@ enum PreferenceLevel {
 }
 
 model User {
-  id                 String     @id @default(uuid())
-  email              String     @unique
-  password           String
-  resetToken         String?    @unique
-  resetTokenExpires  DateTime?
-  refreshToken       String?    @unique // For long-lived sessions
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
-  lists              GiftList[]
-  guestAccess        GuestAccess[]
+  id                       String     @id @default(uuid())
+  email                    String     @unique
+  password                 String
+  isVerified               Boolean    @default(false)
+  verificationToken        String?    @unique
+  verificationTokenExpires DateTime?
+  resetToken               String?    @unique
+  resetTokenExpires        DateTime?
+  refreshToken             String?    @unique // For long-lived sessions
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
+  lists                    GiftList[]
+  guestAccess              GuestAccess[]
 }
 
 model GiftList {
@@ -133,13 +136,23 @@ The application is configured using environment variables. These variables are m
         Credentials for the SMTP server.
 \end{itemize}
 
-\subsection{Authentication Strategy: Access \& Refresh Tokens}
+\subsection{Authentication Strategy}
+\subsubsection{Access \& Refresh Tokens}
 To balance security and usability, the application implements a dual-token system:
 \begin{itemize}
     \item \textbf{Access Token (JWT)}: Short-lived (15 minutes). Sent in the \texttt{Authorization} header.
     \item \textbf{Refresh Token}: Long-lived (7 days). Stored in a \texttt{HttpOnly} cookie. In production (Docker deployment), this cookie is marked as \texttt{Secure}.
 \end{itemize}
 When the Access Token expires, the frontend automatically calls a \texttt{POST /auth/refresh} endpoint, which verifies the Refresh Token and issues a new Access Token. This ensures that the user stays logged in while they are actively using the dashboard.
+
+\subsubsection{Email Verification (Magic Link)}
+To ensure that registered accounts belong to valid users, a Magic Link verification system is in place:
+\begin{itemize}
+    \item Upon registration, the user account is created with \texttt{isVerified = false}.
+    \item A secure token is generated and sent via email.
+    \item The user must click the link to verify their email, which calls the verification API to set \texttt{isVerified = true}.
+    \item Unverified users cannot perform certain secure actions until their email is validated.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Data Model}
@@ -150,6 +163,9 @@ The database schema is designed to support the relationships between Users, List
             \item \texttt{id}: UUID, Primary Key
             \item \texttt{email}: String, unique, required
             \item \texttt{password}: String, hashed, required
+            \item \texttt{isVerified}: Boolean, default: false. Indicates if the user has verified their email.
+            \item \texttt{verificationToken}: String, optional, unique (for magic link verification)
+            \item \texttt{verificationTokenExpires}: Timestamp, optional
             \item \texttt{resetToken}: String, optional, unique (for password recovery)
             \item \texttt{resetTokenExpires}: Timestamp, optional
             \item \texttt{createdAt}: Timestamp, default: now
@@ -304,7 +320,9 @@ The following specific error codes are used to provide granular feedback to the 
 These routes handle user authentication operations. All routes are prefixed with \texttt{/api/v1}.
 \begin{itemize}
     \item \texttt{POST /auth/register} \\
-    Registers a new user account.
+    Registers a new user account with \texttt{isVerified=false} and sends a verification email.
+    \item \texttt{POST /auth/verify-email} \\
+    Verifies a user's email using the token provided via the Magic Link.
     \item \texttt{POST /auth/login} \\
     Authenticates a user and returns a JWT.
     \item \texttt{POST /auth/logout} \\
@@ -490,6 +508,20 @@ If a Celebrant deletes an item that is already \texttt{CLAIMED}:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Email Templates}
 To ensure a consistent and professional communication with users, the following email templates are defined. All emails will be sent in the user's preferred language (English or Italian).
+
+\subsection{Account Verification (Magic Link)}
+Sent immediately after a user registers for a new account.
+\begin{itemize}
+    \item \textbf{Subject (EN)}: Verify your Gift List account
+    \item \textbf{Subject (IT)}: Verifica il tuo account Gift List
+    \item \textbf{Body Content}:
+        \begin{quote}
+            Hi, \\
+            Welcome to Gift List! To activate your account and start creating your wish lists, please verify your email address by clicking the link below: \\
+            \[Magic Link URL\] \\
+            If you did not sign up for this account, you can safely ignore this email.
+        \end{quote}
+\end{itemize}
 
 \subsection{Item Removal Notification (Guest)}
 Sent when a celebrant removes an item that the guest has already claimed.

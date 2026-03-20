@@ -185,6 +185,7 @@ The application uses React Router (v7) to manage navigation. The routes are divi
     \item Public Routes \\
     \begin{itemize}
         \item \texttt{/}: Landing page with Login/Register options for Celebrants.
+        \item \texttt{/verify-email}: Page that automatically processes the Magic Link \texttt{token} from the URL to activate the account.
         \item \texttt{/auth/forgot-password}: Form to request a password reset.
         \item \texttt{/auth/reset-password}: Form to set a new password using the token from the email.
         \item \texttt{/lists/:slug}: The main view for a Guest to see the gift list.
@@ -292,7 +293,7 @@ To ensure maximum visibility for the application, a comprehensive SEO strategy i
             \item \textbf{Meta Tags \& Open Graph}: The \texttt{index.html} includes foundational \texttt{<meta>} tags, canonical links, and Open Graph properties to ensure rich previews when links are shared on social platforms.
         \end{itemize}
     \item \textbf{Dynamic SEO with React Helmet Async} \\
-        Since React applications do not reload the page on navigation, dynamic metadata injection is required. \texttt{react-helmet-async} is utilized to dynamically update the \texttt{<title>}, \texttt{<meta name="description">}, and other relevant tags based on the current component (e.g., setting the title to a specific list's name: "Marco's Gift List | GiftBox").
+        Since React applications do not reload the page on navigation, dynamic metadata injection is required. \texttt{react-helmet-async} is utilized to dynamically update the \texttt{<title>}, \texttt{<meta name="description">}, and other relevant tags based on the current component (e.g., setting the title to a specific list's name: "Marco's Gift List | Compralo").
     \item \textbf{Structured Data (JSON-LD)} \\
         For public-facing pages, JSON-LD scripts are injected to provide search engines with machine-readable context, increasing the likelihood of rich search results.
 \end{itemize}

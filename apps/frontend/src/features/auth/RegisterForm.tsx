@@ -6,16 +6,13 @@ import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import api from '../../lib/axios';
-import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 import styles from './Auth.module.css';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 export const RegisterForm = ({ onToggle }: { onToggle: () => void }) => {
-    const { login } = useAuth();
     const { t } = useLanguage();
-    const navigate = useNavigate();
     const [serverError, setServerError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<RegisterUserInput>({
         resolver: zodResolver(RegisterUserSchema)
@@ -23,10 +20,10 @@ export const RegisterForm = ({ onToggle }: { onToggle: () => void }) => {
 
     const onSubmit = async (data: RegisterUserInput) => {
         setServerError('');
+        setSuccessMessage('');
         try {
             const res = await api.post('/auth/register', data);
-            login(res.data.token, res.data.user);
-            navigate('/dashboard');
+            setSuccessMessage(res.data.message || 'Registrazione completata. Controlla la tua email per verificare l\'account!');
         } catch (err: any) {
             if (err.response) {
                 // The server responded with a status code outside the 2xx range
@@ -54,8 +51,14 @@ export const RegisterForm = ({ onToggle }: { onToggle: () => void }) => {
             <Card>
                 <h2 style={{ marginBottom: '24px', textAlign: 'center' }}>{t('createAccount')}</h2>
                 {serverError && <div className={styles.serverError}>{serverError}</div>}
-
-                <form onSubmit={handleSubmit(onSubmit)}>
+                {successMessage ? (
+                    <div style={{ textAlign: 'center', padding: '16px' }}>
+                        <p style={{ color: 'green', marginBottom: '16px' }}>{successMessage}</p>
+                        <Button onClick={onToggle}>Vai al Login</Button>
+                    </div>
+                ) : (
+                    <>
+                        <form onSubmit={handleSubmit(onSubmit)}>
                     <Input
                         label={t('emailLabel')}
                         type="email"
@@ -80,6 +83,8 @@ export const RegisterForm = ({ onToggle }: { onToggle: () => void }) => {
                     {t('alreadyHaveAccount')}
                     <button className={styles.toggleLink} onClick={onToggle}>{t('loginNow')}</button>
                 </div>
+                    </>
+                )}
             </Card>
         </div>
     );

@@ -26,6 +26,7 @@ services:
       - PORT=3000
       - JWT_SECRET=${JWT_SECRET}
       - CORS_ORIGIN=http://localhost
+      - FRONTEND_URL=http://localhost:80
       - SMTP_HOST=${SMTP_HOST}
       - SMTP_PORT=${SMTP_PORT}
       - SMTP_USER=${SMTP_USER}
