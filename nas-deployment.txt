@@ -5,7 +5,7 @@ services:
     image: ghcr.io/edoardosarri24/gift-list-frontend:main
     restart: always
     environment:
-      - VITE_API_BASE_URL=https://compralo.edoardosarri.com/api/v1
+      - VITE_API_BASE_URL=https://regalamelo.edoardosarri.com/api/v1
     logging:
       driver: "json-file"
       options:
@@ -18,8 +18,8 @@ services:
     environment:
       - DATABASE_URL=postgresql://giftlistuser:miaPasswordSicura@db:5432/giftlistdb
       - PORT=3000
-      - CORS_ORIGIN=https://compralo.edoardosarri.com
-      - FRONTEND_URL=https://compralo.edoardosarri.com
+      - CORS_ORIGIN=https://regalamelo.edoardosarri.com
+      - FRONTEND_URL=https://regalamelo.edoardosarri.com
       - JWT_SECRET=DquWtjmyokZOHxXCr6HGYiu/N6k3P+6Z
       - SMTP_HOST=smtp.gmail.com
       - SMTP_PORT=587

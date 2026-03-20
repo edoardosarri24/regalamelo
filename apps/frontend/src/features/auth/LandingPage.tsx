@@ -21,7 +21,7 @@ export const LandingPage = () => {
         return <Navigate to={returnTo} replace />;
     }
 
-    const baseUrl = 'https://compralo.edoardosarri.com';
+    const baseUrl = 'https://regalamelo.edoardosarri.com';
     const currentUrl = `${baseUrl}${location.pathname}`;
 
     return (
@@ -55,7 +55,7 @@ export const LandingPage = () => {
                     {JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "SoftwareApplication",
-                        "name": "Compralo",
+                        "name": "Regalamelo",
                         "operatingSystem": "Web",
                         "applicationCategory": "UtilityApplication",
                         "description": t('landingSubtitle'),

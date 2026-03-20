@@ -32,7 +32,7 @@ export const GuestAccessPage = () => {
     return (
         <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
             <Helmet>
-                <title>Accesso Ospite | Compralo</title>
+                <title>Accesso Ospite | Regalamelo</title>
                 <meta name="robots" content="noindex" />
             </Helmet>
             <div style={{ width: '100%', maxWidth: '400px', padding: '24px' }}>

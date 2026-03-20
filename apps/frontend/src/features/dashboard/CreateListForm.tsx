@@ -35,7 +35,7 @@ export const CreateListForm = () => {
     return (
         <div style={{ maxWidth: '600px', margin: '48px auto', padding: '0 24px' }}>
             <Helmet>
-                <title>Crea Nuova Lista | Compralo</title>
+                <title>Crea Nuova Lista | Regalamelo</title>
                 <meta name="robots" content="noindex" />
             </Helmet>
             <div style={{ marginBottom: '24px' }}>
