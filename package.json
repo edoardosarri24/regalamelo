@@ -2,5 +2,5 @@
   "name": "gift-list",
   "version": "1.0.0",
   "private": true,
-  "description": "Gift List Monorepo - Deployment managed via Docker"
+  "description": "Regalamelo Monorepo - Deployment managed via Docker"
 }

@@ -1,4 +1,4 @@
-# Gift List
+# Regalamelo
 A modern, self-hosted web application to manage and share gift wish lists. Designed to keep the surprise alive for the celebrant while ensuring guests don't buy duplicate gifts.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -7,12 +7,12 @@ Detailed technical documentation (LaTeX) is available in the `documentation/` di
 
 
 ## Overview
-The **Gift List** application allows:
+The **Regalamelo** application allows:
 - **Celebrants**: Create personalized wish lists, add items with descriptions and links, and share a unique link with friends. Claims are hidden from the celebrant to preserve the surprise.
 - **Guests**: View shared lists, claim items to help others avoid duplicates, and unclaim if necessary. Guests access lists via an email-based session for notifications.
 
 ## Features
-- **Gift Lists Management**: Create, edit, and organize lists for any occasion (birthdays, weddings, etc.).
+- **Regalamelo Lists Management**: Create, edit, and organize lists for any occasion (birthdays, weddings, etc.).
 - **Guest Interaction**: Guests can view public lists just by providing an email, avoiding complex sign-ups. They can confidentially claim gifts.
 - **Advanced Image Uploading**: Support for uploading device images (JPG, PNG) and seamless automatic conversion of **HEIC** formats. Includes an interactive visual cropper and zoom tool. Added URL parsing that loads an external image directly into the cropper.
 - **Drag & Drop**: Native drag & drop file uploader.

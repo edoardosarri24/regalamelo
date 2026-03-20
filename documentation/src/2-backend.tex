@@ -1,5 +1,5 @@
 \chapter{Backend}
-The backend of the Gift List application is designed to be robust, scalable, and secure. Based on the requirements for real-time interactivity and concurrent access, we have selected a Node.js environment. Node.js is an excellent choice for this application due to its event-driven, non-blocking I/O model, which efficiently handles multiple simultaneous connections—critical for when guests are viewing and claiming gifts at the same time.
+The backend of the Regalamelo application is designed to be robust, scalable, and secure. Based on the requirements for real-time interactivity and concurrent access, we have selected a Node.js environment. Node.js is an excellent choice for this application due to its event-driven, non-blocking I/O model, which efficiently handles multiple simultaneous connections—critical for when guests are viewing and claiming gifts at the same time.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Technology Stack}
@@ -512,12 +512,12 @@ To ensure a consistent and professional communication with users, the following 
 \subsection{Account Verification (Magic Link)}
 Sent immediately after a user registers for a new account.
 \begin{itemize}
-    \item \textbf{Subject (EN)}: Verify your Gift List account
-    \item \textbf{Subject (IT)}: Verifica il tuo account Gift List
+    \item \textbf{Subject (EN)}: Verify your Regalamelo account
+    \item \textbf{Subject (IT)}: Verifica il tuo account Regalamelo
     \item \textbf{Body Content}:
         \begin{quote}
             Hi, \\
-            Welcome to Gift List! To activate your account and start creating your wish lists, please verify your email address by clicking the link below: \\
+            Welcome to Regalamelo! To activate your account and start creating your wish lists, please verify your email address by clicking the link below: \\
             \[Magic Link URL\] \\
             If you did not sign up for this account, you can safely ignore this email.
         \end{quote}
@@ -540,8 +540,8 @@ Sent when a celebrant removes an item that the guest has already claimed.
 \subsection{Password Reset}
 Sent when a user requests a password recovery.
 \begin{itemize}
-    \item \textbf{Subject (EN)}: Password Reset Request for Gift List
-    \item \textbf{Subject (IT)}: Richiesta di reset password per Gift List
+    \item \textbf{Subject (EN)}: Password Reset Request for Regalamelo
+    \item \textbf{Subject (IT)}: Richiesta di reset password per Regalamelo
     \item \textbf{Body Content}:
         \begin{quote}
             Hi, \\
