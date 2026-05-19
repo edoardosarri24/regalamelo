@@ -22,7 +22,7 @@ services:
       - "3000:3000"
     restart: always
     environment:
-      - DATABASE_URL=postgresql://user:pass@db:5432/giftlist
+      - DATABASE_URL=postgresql://user:pass@db:5432/regalamelo
       - PORT=3000
       - JWT_SECRET=${JWT_SECRET}
       - CORS_ORIGIN=http://localhost
@@ -45,7 +45,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=giftlist
+      - POSTGRES_DB=regalamelo
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
       - PGDATA=/var/lib/postgresql/data/pg
@@ -71,7 +71,7 @@ services:
       - ./backups:/backups
     environment:
       - POSTGRES_HOST=db
-      - POSTGRES_DB=giftlist
+      - POSTGRES_DB=regalamelo
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
       - SCHEDULE=@daily

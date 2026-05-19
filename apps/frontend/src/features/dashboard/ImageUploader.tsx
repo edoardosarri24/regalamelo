@@ -3,6 +3,7 @@ import Cropper from 'react-easy-crop';
 import { Button } from '../../components/Button';
 import heic2any from 'heic2any';
 import { Upload, X } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 // A utility to get cropped image
 const createImage = (url: string) =>
@@ -75,8 +76,9 @@ export const ImageUploader = ({
     isLoading = false,
     shape = 'round',
     aspectRatio = 1,
-    title = 'Modifica Immagine'
+    title
 }: ImageUploaderProps) => {
+    const { t } = useLanguage();
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [originalUrl, setOriginalUrl] = useState('');
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -155,7 +157,7 @@ export const ImageUploader = ({
     return (
         <div style={{ padding: '24px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.06)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-                <h3 style={{ margin: 0, fontSize: '18px' }}>{title}</h3>
+                <h3 style={{ margin: 0, fontSize: '18px' }}>{title || t('editImage')}</h3>
                 <button type="button" onClick={onCancel} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--color-text-secondary)' }}>
                     <X size={20} />
                 </button>
@@ -170,25 +172,25 @@ export const ImageUploader = ({
                         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '48px 32px', border: `2px dashed ${isDragging ? 'var(--color-primary)' : 'var(--color-border)'}`, borderRadius: '12px', cursor: 'pointer', marginBottom: '24px', backgroundColor: isDragging ? 'rgba(var(--color-primary-rgb), 0.05)' : 'var(--color-bg)' }}
                     >
                         <Upload size={32} color={isDragging ? "var(--color-primary)" : "var(--color-text-secondary)"} />
-                        <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-text)' }}>Carica dal dispositivo o trascina qui</span>
-                        <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>File JPG, PNG o HEIC</span>
+                        <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--color-text)' }}>{t('uploadFromDevice')}</span>
+                        <span style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>{t('supportedFormats')}</span>
                         <input type="file" accept="image/jpeg, image/png, image/heic, .jpeg, .jpg, .png, .heic, image/*" onChange={onFileChange} style={{ display: 'none' }} />
                     </label>
 
                     <div style={{ textAlign: 'center', fontSize: '13px', fontWeight: 500, color: 'var(--color-text-secondary)', marginBottom: '24px', position: 'relative' }}>
                         <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1px', background: 'var(--color-border)' }}></div>
-                        <span style={{ background: 'var(--color-surface)', padding: '0 12px', position: 'relative' }}>OPPURE</span>
+                        <span style={{ background: 'var(--color-surface)', padding: '0 12px', position: 'relative' }}>{t('orSeparator')}</span>
                     </div>
 
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
                         <input
                             type="text"
-                            placeholder="Incolla solo URL (es: https://...)"
+                            placeholder={t('pasteUrlPlaceholder')}
                             value={originalUrl}
                             onChange={handleUrlPaste}
                             style={{ flex: '1 1 min-content', minWidth: '150px', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--color-border)', fontSize: '15px' }}
                         />
-                        <Button type="button" onClick={() => setImageSrc(originalUrl)} disabled={!originalUrl} style={{ whiteSpace: 'nowrap' }}>Carica URL</Button>
+                        <Button type="button" onClick={() => setImageSrc(originalUrl)} disabled={!originalUrl} style={{ whiteSpace: 'nowrap' }}>{t('loadUrl')}</Button>
                     </div>
                 </>
             ) : (
@@ -207,7 +209,7 @@ export const ImageUploader = ({
                         />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-                        <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text)' }}>Zoom</span>
+                        <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--color-text)' }}>{t('zoom')}</span>
                         <input
                             type="range"
                             value={zoom}
@@ -220,8 +222,8 @@ export const ImageUploader = ({
                         />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', flexWrap: 'wrap' }}>
-                        <Button type="button" variant="secondary" onClick={() => setImageSrc(null)} disabled={isLoading} style={{ whiteSpace: 'nowrap' }}>Indietro</Button>
-                        <Button type="button" onClick={showCroppedImage} isLoading={isLoading} style={{ whiteSpace: 'nowrap' }}>Conferma Taglio</Button>
+                        <Button type="button" variant="secondary" onClick={() => setImageSrc(null)} disabled={isLoading} style={{ whiteSpace: 'nowrap' }}>{t('back')}</Button>
+                        <Button type="button" onClick={showCroppedImage} isLoading={isLoading} style={{ whiteSpace: 'nowrap' }}>{t('confirmCrop')}</Button>
                     </div>
                 </>
             )}

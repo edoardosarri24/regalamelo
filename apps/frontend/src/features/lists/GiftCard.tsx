@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
-import { GiftItemDTO } from '@gift-list/shared';
+import { GiftItemDTO } from '@regalamelo/shared';
 import { Gift } from 'lucide-react';
 
 interface GiftCardProps {

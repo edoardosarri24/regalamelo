@@ -5,8 +5,10 @@ import { Button } from '../../components/Button';
 import api from '../../lib/axios';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './Auth.module.css';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export const VerifyEmailPage = () => {
+    const { t } = useLanguage();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { login } = useAuth();
@@ -17,7 +19,7 @@ export const VerifyEmailPage = () => {
         const token = searchParams.get('token');
         if (!token) {
             setStatus('error');
-            setErrorMessage('Token mancante nel link.');
+            setErrorMessage(t('tokenMissing'));
             return;
         }
 
@@ -28,7 +30,7 @@ export const VerifyEmailPage = () => {
                 setStatus('success');
             } catch (err: any) {
                 setStatus('error');
-                setErrorMessage(err.response?.data?.error?.message || 'Link non valido o scaduto.');
+                setErrorMessage(err.response?.data?.error?.message || t('invalidOrExpiredLink'));
             }
         };
 
@@ -39,19 +41,19 @@ export const VerifyEmailPage = () => {
         <div className={styles.formContainer}>
             <Card>
                 <div style={{ textAlign: 'center', padding: '24px' }}>
-                    {status === 'loading' && <h2>Verifica in corso...</h2>}
+                    {status === 'loading' && <h2>{t('verifying')}</h2>}
                     {status === 'success' && (
                         <>
-                            <h2 style={{ color: 'green', marginBottom: '16px' }}>Account Verificato!</h2>
-                            <p style={{ marginBottom: '24px' }}>Il tuo indirizzo email è stato confermato con successo.</p>
-                            <Button onClick={() => navigate('/dashboard')}>Vai alla Dashboard</Button>
+                            <h2 style={{ color: 'green', marginBottom: '16px' }}>{t('accountVerified')}</h2>
+                            <p style={{ marginBottom: '24px' }}>{t('emailVerifiedSuccess')}</p>
+                            <Button onClick={() => navigate('/dashboard')}>{t('backToDashboard')}</Button>
                         </>
                     )}
                     {status === 'error' && (
                         <>
-                            <h2 style={{ color: 'red', marginBottom: '16px' }}>Errore di Verifica</h2>
+                            <h2 style={{ color: 'red', marginBottom: '16px' }}>{t('verificationError')}</h2>
                             <p style={{ marginBottom: '24px' }}>{errorMessage}</p>
-                            <Button onClick={() => navigate('/')}>Torna alla Home</Button>
+                            <Button onClick={() => navigate('/')}>{t('backToHome')}</Button>
                         </>
                     )}
                 </div>

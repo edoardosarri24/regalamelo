@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { register, login, logout, refresh, verifyEmail } from '../controllers/auth.controller';
 import { validateBody } from '../middlewares/validate';
-import { RegisterUserSchema, LoginUserSchema, VerifyEmailSchema } from '@gift-list/shared';
+import { RegisterUserSchema, LoginUserSchema, VerifyEmailSchema } from '@regalamelo/shared';
 
 const router = Router();
 

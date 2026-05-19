@@ -1,5 +1,5 @@
 {
-  "name": "gift-list",
+  "name": "regalamelo",
   "version": "1.0.0",
   "private": true,
   "description": "Regalamelo Monorepo - Deployment managed via Docker"

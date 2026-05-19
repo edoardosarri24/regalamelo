@@ -4,7 +4,7 @@ import { VerifyEmailPage } from './features/auth/VerifyEmailPage';
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import { CreateListForm } from './features/dashboard/CreateListForm';
 import { ManageListPage } from './features/dashboard/ManageListPage';
-import { PublicListPage } from './features/gift-list/PublicListPage';
+import { PublicListPage } from './features/lists/PublicListPage';
 
 function App() {
     return (

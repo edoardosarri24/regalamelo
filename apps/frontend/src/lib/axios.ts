@@ -22,8 +22,12 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // Token Refresher Logic
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Token Refresher Logic - Exclude verification endpoint to avoid red-herrings
+        if (
+            error.response?.status === 401 && 
+            !originalRequest._retry && 
+            !originalRequest.url?.includes('/auth/verify-email')
+        ) {
             originalRequest._retry = true;
             try {
                 const { data } = await axios.post(

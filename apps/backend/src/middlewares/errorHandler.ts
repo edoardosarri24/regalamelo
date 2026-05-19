@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ErrorCodes } from '@gift-list/shared';
+import { ErrorCodes } from '@regalamelo/shared';
 
 // Unified Error Response format defined in latex doc
 export const errorHandler = (

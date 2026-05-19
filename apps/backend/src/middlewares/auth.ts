@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { ErrorCodes } from '@gift-list/shared';
+import { ErrorCodes } from '@regalamelo/shared';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretfallback';
 

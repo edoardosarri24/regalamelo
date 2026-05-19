@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/auth';
 import { validateBody } from '../middlewares/validate';
-import { CreateGiftItemSchema, UpdateGiftItemSchema } from '@gift-list/shared';
+import { CreateGiftItemSchema, UpdateGiftItemSchema } from '@regalamelo/shared';
 import { addItemToList, updateItem, deleteItem } from '../controllers/item.controller';
 import { claimItem, unclaimItem } from '../controllers/guest.controller';
 

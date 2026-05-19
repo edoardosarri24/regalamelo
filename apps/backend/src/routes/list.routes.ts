@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateJWT } from '../middlewares/auth';
 import { validateBody } from '../middlewares/validate';
-import { CreateGiftListSchema, GuestAccessSchema, UpdateGiftListSchema, UpdateGuestAccessNameSchema } from '@gift-list/shared';
+import { CreateGiftListSchema, GuestAccessSchema, UpdateGiftListSchema, UpdateGuestAccessNameSchema } from '@regalamelo/shared';
 import {
     getUserDashboardLists,
     createList,

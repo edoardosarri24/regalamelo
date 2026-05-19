@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../utils/prisma';
-import { CreateGiftListInput, ErrorCodes, GuestAccessInput } from '@gift-list/shared';
+import { CreateGiftListInput, ErrorCodes, GuestAccessInput } from '@regalamelo/shared';
 import crypto from 'crypto';
 
 export const getUserDashboardLists = async (req: Request, res: Response, next: NextFunction) => {

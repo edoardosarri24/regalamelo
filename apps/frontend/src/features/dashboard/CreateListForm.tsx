@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CreateGiftListInput, CreateGiftListSchema } from '@gift-list/shared';
+import { CreateGiftListInput, CreateGiftListSchema } from '@regalamelo/shared';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
@@ -10,8 +10,10 @@ import api from '../../lib/axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { ImageUploader } from './ImageUploader';
 import { Pencil, Trash2 } from 'lucide-react';
+import { useLanguage } from '../../i18n/LanguageContext';
 
 export const CreateListForm = () => {
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [imageUrl, setImageUrl] = useState('');
@@ -35,12 +37,12 @@ export const CreateListForm = () => {
     return (
         <div style={{ maxWidth: '600px', margin: '48px auto', padding: '0 24px' }}>
             <Helmet>
-                <title>Crea Nuova Lista | Regalamelo</title>
+                <title>{t('createNewList')} | Regalamelo</title>
                 <meta name="robots" content="noindex" />
             </Helmet>
             <div style={{ marginBottom: '24px' }}>
                 <Link to="/dashboard" style={{ textDecoration: 'none', color: 'var(--color-primary)' }}>
-                    ← Torna alla Dashboard
+                    {t('backToDashboard')}
                 </Link>
             </div>
 
@@ -53,8 +55,8 @@ export const CreateListForm = () => {
                 </div>
             ) : (
                 <Card>
-                    <h2>Crea una Nuova Lista Regali</h2>
-                    <p style={{ color: 'gray', marginBottom: '24px' }}>Dai un nome alla tua lista (es. "Il mio 30° Compleanno", "Lista Nozze")</p>
+                    <h2>{t('createListTitle')}</h2>
+                    <p style={{ color: 'gray', marginBottom: '24px' }}>{t('createListDesc')}</p>
 
                     {error && <div style={{ color: 'red', marginBottom: '16px' }}>{error}</div>}
 
@@ -64,7 +66,7 @@ export const CreateListForm = () => {
                                 {imageUrl ? (
                                     <img src={imageUrl} alt="Profilo Lista" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                 ) : (
-                                    <span style={{ color: 'var(--color-text-secondary)', fontSize: '13px', textAlign: 'center' }}>Nessuna<br />Foto</span>
+                                    <span style={{ color: 'var(--color-text-secondary)', fontSize: '13px', textAlign: 'center' }}>{t('noPhoto')}</span>
                                 )}
                             </div>
                             <button
@@ -77,21 +79,21 @@ export const CreateListForm = () => {
                         </div>
                         {imageUrl && (
                             <button type="button" onClick={() => setImageUrl('')} style={{ background: 'none', border: 'none', color: 'var(--color-secondary)', fontSize: '13px', marginTop: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <Trash2 size={14} /> Rimuovi Foto
+                                <Trash2 size={14} /> {t('removePhoto')}
                             </button>
                         )}
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Input
-                            label="Nome Lista"
+                            label={t('listNameLabel')}
                             placeholder="es. Il mio fantastico compleanno"
                             {...register('name')}
                             error={errors.name?.message}
                         />
                         <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end' }}>
                             <Button type="submit" isLoading={isSubmitting}>
-                                Crea Lista
+                                {t('createListButton')}
                             </Button>
                         </div>
                     </form>

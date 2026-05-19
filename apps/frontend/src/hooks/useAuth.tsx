@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserDTO } from '@gift-list/shared';
+import { UserDTO } from '@regalamelo/shared';
 import api, { setAuthToken } from '../lib/axios';
 
 interface AuthContextType {

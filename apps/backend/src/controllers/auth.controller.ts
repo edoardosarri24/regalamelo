@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../utils/prisma';
-import { RegisterUserInput, LoginUserInput, ErrorCodes } from '@gift-list/shared';
+import { RegisterUserInput, LoginUserInput, ErrorCodes } from '@regalamelo/shared';
 import crypto from 'crypto';
 import { sendVerificationEmail } from '../services/email.service';
 

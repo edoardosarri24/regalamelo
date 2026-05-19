@@ -27,7 +27,7 @@ The frontend will be built as a Single Page Application (SPA) using the followin
     \item Styling \\
         CSS Modules with Vanilla CSS.
     \item Internationalization \\
-        \texttt{react-i18next}. To manage translations and user language preferences. The app is fully localized in Italian and English.
+        Custom \texttt{LanguageContext} using React Context API. To manage translations and user language preferences. The app is fully localized in Italian and English.
     \item Image Processing \\
         \texttt{react-easy-crop} for an interactive visual cropping experience, and \texttt{heic2any} to seamlessly convert Apple HEIC formats to standard JPEG before upload.
 \end{itemize}
@@ -74,10 +74,10 @@ Axios is configured as a singleton client with the following settings:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Internationalization (i18n)}
-The application supports English and Italian using \texttt{react-i18next}.
+The application supports English and Italian using a custom \texttt{LanguageContext}.
 \begin{itemize}
-    \item \textbf{Detection}: The language is detected via the browser settings (\texttt{i18next-browser-languagedetector}).
-    \item \textbf{Structure}: Translation strings are stored in JSON files within \texttt{/public/locales/{en|it}/common.json}.
+    \item \textbf{Detection}: The language is initially detected via the browser settings and persisted in \texttt{localStorage}.
+    \item \textbf{Structure}: Translation strings are organized in a centralized \texttt{LanguageContext.tsx} file.
     \item \textbf{Guest Preference}: When a Guest provides their email to access a list, their current language setting is sent to the backend to ensure notification emails are sent in the correct language.
 \end{itemize}
 
@@ -157,7 +157,7 @@ Within \texttt{apps/frontend/src}, the structure follows a feature-based organiz
   /components     # Shared UI components (Button, Input, Card)
   /features       # Domain-specific logic
     /auth         # Login, Register, Password Reset forms
-    /gift-list    # List view, Item card, Claim logic
+    /lists        # List view, Item card, Claim logic
     /dashboard    # Celebrant admin panel
   /hooks          # Shared custom hooks (useAuth, useTheme)
   /lib            # Configuration (API client, utils)

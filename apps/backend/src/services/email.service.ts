@@ -35,25 +35,35 @@ export const sendClaimedItemRemovalNotification = async (
 
         const html = language === 'en'
             ? `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-                    <h2 style="color: #007AFF;">Regalamelo Update</h2>
-                    <p>Hello,</p>
-                    <p>The gift <b>"${itemName}"</b> that you had claimed on the list <b>"${listName}"</b> has been removed by the celebrant.</p>
-                    <p>You no longer need to buy it. You can check the list again for other available items.</p>
-                    <br/>
-                    <p>Thank you,</p>
-                    <p><strong>Regalamelo</strong></p>
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+                    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                        <img src="https://regalamelo.edoardosarri.com/og-image.png" alt="Regalamelo Logo" style="max-width: 100%; height: auto; border-radius: 4px;" />
+                    </div>
+                    <div style="padding: 30px; color: #334155; line-height: 1.6;">
+                        <h2 style="color: #0f172a; margin-top: 0; font-size: 24px;">Regalamelo Update</h2>
+                        <p style="font-size: 16px;">Hello,</p>
+                        <p style="font-size: 16px;">The gift <b>"${itemName}"</b> that you had claimed on the list <b>"${listName}"</b> has been removed by the celebrant.</p>
+                        <p style="font-size: 16px;">You no longer need to buy it. You can check the list again for other available items.</p>
+                    </div>
+                    <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb; color: #64748b; font-size: 13px;">
+                        <p style="margin: 0;">&copy; ${new Date().getFullYear()} Regalamelo. All rights reserved.</p>
+                    </div>
                 </div>
             `
             : `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-                    <h2 style="color: #007AFF;">Aggiornamento Regalamelo</h2>
-                    <p>Ciao,</p>
-                    <p>Il regalo <b>"${itemName}"</b> che avevi prenotato sulla lista <b>"${listName}"</b> è stato rimosso dal festeggiato.</p>
-                    <p>Non è più necessario acquistarlo. Puoi consultare nuovamente la lista per scoprire altri regali disponibili.</p>
-                    <br/>
-                    <p>Grazie,</p>
-                    <p><strong>Regalamelo</strong></p>
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+                    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                        <img src="https://regalamelo.edoardosarri.com/og-image.png" alt="Regalamelo Logo" style="max-width: 100%; height: auto; border-radius: 4px;" />
+                    </div>
+                    <div style="padding: 30px; color: #334155; line-height: 1.6;">
+                        <h2 style="color: #0f172a; margin-top: 0; font-size: 24px;">Aggiornamento Regalamelo</h2>
+                        <p style="font-size: 16px;">Ciao,</p>
+                        <p style="font-size: 16px;">Il regalo <b>"${itemName}"</b> che avevi prenotato sulla lista <b>"${listName}"</b> è stato rimosso dal festeggiato.</p>
+                        <p style="font-size: 16px;">Non è più necessario acquistarlo. Puoi consultare nuovamente la lista per scoprire altri regali disponibili.</p>
+                    </div>
+                    <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb; color: #64748b; font-size: 13px;">
+                        <p style="margin: 0;">&copy; ${new Date().getFullYear()} Regalamelo. Tutti i diritti riservati.</p>
+                    </div>
                 </div>
             `;
 
@@ -109,31 +119,43 @@ export const sendVerificationEmail = async (
 
         const html = language === 'it'
             ? `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-                    <h2 style="color: #007AFF;">Benvenuto in Regalamelo</h2>
-                    <p>Ciao,</p>
-                    <p>Per attivare il tuo account e iniziare a creare liste desideri, verifica il tuo indirizzo email cliccando sul link qui sotto:</p>
-                    <div style="margin: 30px 0;">
-                        <a href="${verifyUrl}" style="background-color: #007AFF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Verifica Email</a>
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+                    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                        <img src="https://regalamelo.edoardosarri.com/og-image.png" alt="Regalamelo Logo" style="max-width: 100%; height: auto; border-radius: 4px;" />
                     </div>
-                    <p style="color: #666; font-size: 12px;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:<br/>${verifyUrl}</p>
-                    <br/>
-                    <p>Grazie,</p>
-                    <p><strong>Regalamelo</strong></p>
+                    <div style="padding: 30px; color: #334155; line-height: 1.6;">
+                        <h2 style="color: #0f172a; margin-top: 0; font-size: 24px;">Benvenuto in Regalamelo!</h2>
+                        <p style="font-size: 16px;">Ciao,</p>
+                        <p style="font-size: 16px;">Per attivare il tuo account e iniziare a creare le tue liste desideri, verifica il tuo indirizzo email cliccando sul pulsante qui sotto:</p>
+                        <div style="text-align: center; margin: 35px 0;">
+                            <a href="${verifyUrl}" style="background-color: #3b82f6; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; display: inline-block;">Verifica la tua Email</a>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 0;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</p>
+                        <p style="color: #3b82f6; font-size: 14px; word-break: break-all; margin-top: 5px;">${verifyUrl}</p>
+                    </div>
+                    <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb; color: #64748b; font-size: 13px;">
+                        <p style="margin: 0;">&copy; ${new Date().getFullYear()} Regalamelo. Tutti i diritti riservati.</p>
+                    </div>
                 </div>
             `
             : `
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
-                    <h2 style="color: #007AFF;">Welcome to Regalamelo</h2>
-                    <p>Hi,</p>
-                    <p>To activate your account and start creating your wish lists, please verify your email address by clicking the link below:</p>
-                    <div style="margin: 30px 0;">
-                        <a href="${verifyUrl}" style="background-color: #007AFF; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Verify Email</a>
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+                    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                        <img src="https://regalamelo.edoardosarri.com/og-image.png" alt="Regalamelo Logo" style="max-width: 100%; height: auto; border-radius: 4px;" />
                     </div>
-                    <p style="color: #666; font-size: 12px;">If the button doesn't work, copy and paste this link into your browser:<br/>${verifyUrl}</p>
-                    <br/>
-                    <p>Thank you,</p>
-                    <p><strong>Regalamelo</strong></p>
+                    <div style="padding: 30px; color: #334155; line-height: 1.6;">
+                        <h2 style="color: #0f172a; margin-top: 0; font-size: 24px;">Welcome to Regalamelo!</h2>
+                        <p style="font-size: 16px;">Hi,</p>
+                        <p style="font-size: 16px;">To activate your account and start creating your wish lists, please verify your email address by clicking the button below:</p>
+                        <div style="text-align: center; margin: 35px 0;">
+                            <a href="${verifyUrl}" style="background-color: #3b82f6; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; display: inline-block;">Verify your Email</a>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 0;">If the button doesn't work, copy and paste this link into your browser:</p>
+                        <p style="color: #3b82f6; font-size: 14px; word-break: break-all; margin-top: 5px;">${verifyUrl}</p>
+                    </div>
+                    <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb; color: #64748b; font-size: 13px;">
+                        <p style="margin: 0;">&copy; ${new Date().getFullYear()} Regalamelo. All rights reserved.</p>
+                    </div>
                 </div>
             `;
 

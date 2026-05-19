@@ -23,8 +23,8 @@ services:
       - JWT_SECRET=DquWtjmyokZOHxXCr6HGYiu/N6k3P+6Z
       - SMTP_HOST=smtp.gmail.com
       - SMTP_PORT=587
-      - SMTP_USER=la-tua-mail@gmail.com
-      - SMTP_PASS=la-tua-password-per-app
+      - SMTP_USER=regalamelo.app@gmail.com
+      - SMTP_PASS=vrrmdlevlxhfshlh
     depends_on:
       - db
     logging:

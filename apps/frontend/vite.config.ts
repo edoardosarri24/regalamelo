@@ -9,7 +9,7 @@ export default defineConfig({
     plugins: [react()],
     resolve: {
         alias: {
-            '@gift-list/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
+            '@regalamelo/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
         },
     },
     server: {

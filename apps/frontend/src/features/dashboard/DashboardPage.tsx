@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../lib/axios';
-import { GiftListDTO } from '@gift-list/shared';
+import { GiftListDTO } from '@regalamelo/shared';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
@@ -85,7 +85,7 @@ export const DashboardPage = () => {
                         </Button>
                     </div>
                 )}
-                {list.customName && <p style={{ fontSize: '12px', color: 'gray', marginTop: '4px' }}>Original: {list.name}</p>}
+                {list.customName && <p style={{ fontSize: '12px', color: 'gray', marginTop: '4px' }}>{t('original')}: {list.name}</p>}
 
                 <p style={{ marginTop: '8px', color: 'gray' }}>{t('giftsCount')}: {list.items.length}</p>
                 <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>

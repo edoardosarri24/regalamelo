@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { Request, Response, NextFunction } from 'express';
-import { ErrorCodes } from '@gift-list/shared';
+import { ErrorCodes } from '@regalamelo/shared';
 
 export const validateBody = (schema: z.ZodSchema) => {
     return (req: Request, res: Response, next: NextFunction) => {

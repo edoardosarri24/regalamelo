@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../utils/prisma';
-import { CreateGiftItemInput, UpdateGiftItemInput, ErrorCodes } from '@gift-list/shared';
+import { CreateGiftItemInput, UpdateGiftItemInput, ErrorCodes } from '@regalamelo/shared';
 import { sendClaimedItemRemovalNotification } from '../services/email.service';
 
 export const addItemToList = async (req: Request, res: Response, next: NextFunction) => {

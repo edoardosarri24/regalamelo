@@ -16,7 +16,7 @@ The **Regalamelo** application allows:
 - **Guest Interaction**: Guests can view public lists just by providing an email, avoiding complex sign-ups. They can confidentially claim gifts.
 - **Advanced Image Uploading**: Support for uploading device images (JPG, PNG) and seamless automatic conversion of **HEIC** formats. Includes an interactive visual cropper and zoom tool. Added URL parsing that loads an external image directly into the cropper.
 - **Drag & Drop**: Native drag & drop file uploader.
-- **Italian Localization**: The entire web application UI has been fully translated and localized into Italian natively.
+- **Multi-language Support**: The application UI is fully internationalized, currently supporting **Italian** and **English**.
 - **Surprise Preservation**: The celebrant cannot see which items have been claimed to keep the surprise alive.
 
 ## Architecture

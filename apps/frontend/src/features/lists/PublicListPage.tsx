@@ -4,7 +4,7 @@ import { useParams, Navigate, useLocation, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Input } from '../../components/Input';
 import api from '../../lib/axios';
-import { GiftListDTO } from '@gift-list/shared';
+import { GiftListDTO } from '@regalamelo/shared';
 import { GiftCard } from './GiftCard';
 import { Copy, Check, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
@@ -70,14 +70,14 @@ export const PublicListPage = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    if (isLoading) return <div style={{ padding: '48px', textAlign: 'center' }}>Caricamento Lista...</div>;
+    if (isLoading) return <div style={{ padding: '48px', textAlign: 'center' }}>{t('loading')}</div>;
 
     // If unauthorized, guest doesn't have a session, redirect to login
     if (error && (error as any).response?.status === 401) {
         return <Navigate to={`/?returnTo=${encodeURIComponent(location.pathname)}`} replace />;
     }
 
-    if (!list) return <div style={{ padding: '48px', textAlign: 'center' }}>Lista non trovata.</div>;
+    if (!list) return <div style={{ padding: '48px', textAlign: 'center' }}>{t('listNotFound')}</div>;
 
     const { t } = useLanguage();
 
@@ -127,7 +127,7 @@ export const PublicListPage = () => {
                             onKeyDown={(e) => e.key === 'Enter' && updateNameMutation.mutate(editNameValue)}
                         />
                         <Button onClick={() => updateNameMutation.mutate(editNameValue)} variant="primary">{t('save')}</Button>
-                        <Button onClick={() => setIsEditingName(false)} variant="outline">Annulla</Button>
+                        <Button onClick={() => setIsEditingName(false)} variant="outline">{t('cancel')}</Button>
                     </div>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -139,23 +139,23 @@ export const PublicListPage = () => {
                         </Button>
                     </div>
                 )}
-                {list.customName && !isEditingName && <p style={{ fontSize: '14px', color: 'gray', marginTop: '4px' }}>Originale: {list.name}</p>}
+                {list.customName && !isEditingName && <p style={{ fontSize: '14px', color: 'gray', marginTop: '4px' }}>{t('original')}: {list.name}</p>}
 
-                <p style={{ color: 'gray', marginTop: '16px' }}>Il regalo selezionato non sarà più visibile dagli altri invitati.</p>
+                <p style={{ color: 'gray', marginTop: '16px' }}>{t('claimMessage')}</p>
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px', flexWrap: 'wrap' }}>
                     <button
                         onClick={handleCopy}
                         style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '8px', border: '1px solid var(--color-border)', background: 'var(--color-surface)', cursor: 'pointer', color: 'var(--color-text)', fontSize: '14px', whiteSpace: 'nowrap' }}
                     >
                         {copied ? <Check size={16} /> : <Copy size={16} />}
-                        {copied ? 'Link Copiato!' : 'Copia Link Lista'}
+                        {copied ? t('linkCopied') : t('copyListLink')}
                     </button>
                 </div>
             </div>
 
             {list.items.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '48px', background: 'var(--color-surface)', borderRadius: '8px' }}>
-                    Nessun regalo è stato ancora aggiunto a questa lista. Torna a controllare più tardi!
+                    {t('emptyListMsg')}
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

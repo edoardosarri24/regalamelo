@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GuestAccessInput, GuestAccessSchema } from '@gift-list/shared';
+import { GuestAccessInput, GuestAccessSchema } from '@regalamelo/shared';
 import api from '../../lib/axios';
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';

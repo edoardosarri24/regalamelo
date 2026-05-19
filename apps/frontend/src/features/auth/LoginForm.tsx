@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginUserInput, LoginUserSchema } from '@gift-list/shared';
+import { LoginUserInput, LoginUserSchema } from '@regalamelo/shared';
 import { Input } from '../../components/Input';
 import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
@@ -33,18 +33,18 @@ export const LoginForm = ({ onToggle }: { onToggle: () => void }) => {
                 const message = err.response.data?.error?.message;
 
                 if (status === 401) {
-                    setServerError('Credenziali non valide. Controlla email e password.');
+                    setServerError(t('invalidCredentials'));
                 } else if (status === 403 && err.response.data?.error?.code === 'AUTH_EMAIL_NOT_VERIFIED') {
-                    setServerError('Devi prima verificare la tua email. Controlla la casella di posta.');
+                    setServerError(t('emailNotVerified'));
                 } else if (status >= 400 && status < 500) {
-                    setServerError(message || 'Dati non validi. Riprova.');
+                    setServerError(message || t('invalidData'));
                 } else {
-                    setServerError('Il server ha riscontrato un problema. Riprova più tardi.');
+                    setServerError(t('serverError'));
                 }
             } else if (err.request) {
-                setServerError('Impossibile contattare il server. Controlla la tua connessione.');
+                setServerError(t('connectionError'));
             } else {
-                setServerError('Si è verificato un errore imprevisto. Riprova.');
+                setServerError(t('unexpectedError'));
             }
         }
     };

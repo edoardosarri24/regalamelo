@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import prisma from '../utils/prisma';
-import { ErrorCodes } from '@gift-list/shared';
+import { ErrorCodes } from '@regalamelo/shared';
 
 export const claimItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
