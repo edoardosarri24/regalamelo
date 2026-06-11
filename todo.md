@@ -1,3 +1,0 @@
-- controllo seo se ok
-- cosigli sull'app da parte degli utenti.
-- grafica app
