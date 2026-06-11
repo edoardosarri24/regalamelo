@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   frontend:
     container_name: frontend
@@ -28,8 +26,7 @@ services:
       - SMTP_USER=regalamelo.app@gmail.com
       - SMTP_PASS=vrrmdlevlxhfshlh
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     logging:
       driver: "json-file"
       options:
@@ -45,6 +42,7 @@ services:
       - POSTGRES_DB=giftlistdb
       - POSTGRES_USER=giftlistuser
       - POSTGRES_PASSWORD=miaPasswordSicura
+      - PGDATA=/var/lib/postgresql/data/pg
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U giftlistuser -d giftlistdb"]
       interval: 5s
@@ -87,8 +85,7 @@ services:
       - SCHEDULE=@daily
       - BACKUP_KEEP_DAYS=7
     depends_on:
-      db:
-        condition: service_healthy
+      - db
 
 volumes:
   NAS_DATABASE_DATA:
