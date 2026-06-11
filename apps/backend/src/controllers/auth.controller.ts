@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../utils/prisma';
-import { RegisterUserInput, LoginUserInput, ErrorCodes } from '@regalamelo/shared';
+import { RegisterUserInput, LoginUserInput, ForgotPasswordInput, ResetPasswordInput, ErrorCodes } from '@regalamelo/shared';
 import crypto from 'crypto';
-import { sendVerificationEmail } from '../services/email.service';
+import { sendVerificationEmail, sendPasswordResetEmail } from '../services/email.service';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretfallback';
 
@@ -112,7 +112,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
-            secure: false,
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'lax',
             maxAge: 7 * 24 * 60 * 60 * 1000,
         });
@@ -160,4 +160,62 @@ export const logout = async (req: Request, res: Response) => {
     res.clearCookie('refresh_token', { path: '/' });
     res.clearCookie('guest_session', { path: '/' });
     res.status(204).send();
+};
+
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email } = req.body as ForgotPasswordInput;
+        // Accept-Language header or default to 'it'
+        const lang = req.headers['accept-language']?.startsWith('en') ? 'en' : 'it';
+
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            // For security, don't reveal if email exists or not
+            res.json({ message: 'If the email exists, a password reset link has been sent.' });
+            return;
+        }
+
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetTokenExpires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                resetToken,
+                resetTokenExpires,
+            },
+        });
+
+        await sendPasswordResetEmail(user.email, resetToken, lang);
+
+        res.json({ message: 'If the email exists, a password reset link has been sent.' });
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const resetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { token, password } = req.body as ResetPasswordInput;
+
+        const user = await prisma.user.findUnique({ where: { resetToken: token } });
+        if (!user || !user.resetTokenExpires || user.resetTokenExpires < new Date()) {
+            throw { status: 401, code: ErrorCodes.AUTH_TOKEN_EXPIRED, message: 'Invalid or expired password reset token' };
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                password: hashedPassword,
+                resetToken: null,
+                resetTokenExpires: null,
+            },
+        });
+
+        res.json({ message: 'Password has been reset successfully. You can now log in with your new password.' });
+    } catch (err) {
+        next(err);
+    }
 };

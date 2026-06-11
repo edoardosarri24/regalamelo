@@ -48,6 +48,15 @@ export const UpdateGuestAccessNameSchema = z.object({
     customName: z.string().min(1, 'Name must be at least 1 character').max(50, 'Name cannot exceed 50 characters'),
 });
 
+export const ForgotPasswordSchema = z.object({
+    email: z.string().email('Invalid email address'),
+});
+
+export const ResetPasswordSchema = z.object({
+    token: z.string().min(1, 'Token is required'),
+    password: PasswordSchema,
+});
+
 // Infer types
 export type RegisterUserInput = z.infer<typeof RegisterUserSchema>;
 export type LoginUserInput = z.infer<typeof LoginUserSchema>;
@@ -58,3 +67,5 @@ export type CreateGiftItemInput = z.infer<typeof CreateGiftItemSchema>;
 export type UpdateGiftItemInput = z.infer<typeof UpdateGiftItemSchema>;
 export type GuestAccessInput = z.infer<typeof GuestAccessSchema>;
 export type UpdateGuestAccessNameInput = z.infer<typeof UpdateGuestAccessNameSchema>;
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof ResetPasswordSchema>;

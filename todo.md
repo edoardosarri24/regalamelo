@@ -1,6 +1,6 @@
 - controllo seo se ok
 - fare mail
-- recupero password con mail
+- [x] recupero password con mail
 - controllo mail alla registrazione.
 - cosigli sull'app da parte degli utenti.
 - grafica app

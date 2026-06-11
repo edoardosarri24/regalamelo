@@ -71,6 +71,17 @@ export const LoginForm = ({ onToggle }: { onToggle: () => void }) => {
                         error={errors.password?.message}
                     />
 
+                    <div style={{ textAlign: 'right', marginBottom: '24px', marginTop: '-8px' }}>
+                        <button
+                            type="button"
+                            className={styles.toggleLink}
+                            onClick={() => navigate('/auth/forgot-password')}
+                            style={{ fontSize: '13px', border: 'none', padding: 0 }}
+                        >
+                            {t('forgotPasswordLink')}
+                        </button>
+                    </div>
+
                     <Button type="submit" isLoading={isSubmitting} style={{ width: '100%' }}>
                         {t('loginButton')}
                     </Button>

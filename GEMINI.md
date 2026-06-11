@@ -34,7 +34,7 @@ To balance safety and velocity, distinguish between these two types of actions:
 
 ## 4. Technical & Environment Hints
 * **LaTeX Handling:** Ensure valid syntax. Respect the project structure (`main.tex`, `src/`, etc.). Use `% LOGIC:` for semantic comments in LaTeX.
-* **Docker ONLY (STRICT):** Do **NOT** install any dependencies or run any part of the application (frontend, backend, database) directly on the host system. Local execution without Docker has been intentionally removed and is strictly forbidden.
+* **Docker ONLY (STRICT):** Do **NOT** install any dependencies or run any part of the application (frontend, backend, database) directly on the host system. Local execution without Docker has been intentionally removed and is strictly forbidden. Always run and test the application using Docker via: `docker compose up -d --build`.
 * **Environment Management:** All components must be containerized. The only way to execute or deploy the application is via `docker compose`. Use `Dockerfile` and `docker-compose.yml` for all environment management.
 * **Context Awareness:** Always scan `documentation/**` before proposing any change to ensure consistency with the existing architecture.
 

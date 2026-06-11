@@ -99,7 +99,16 @@ const translations = {
         unexpectedError: 'Si è verificato un errore imprevisto. Riprova.',
         registrationSuccess: "Registrazione completata. Controlla la tua email per verificare l'account!",
         emailAlreadyRegistered: 'Questa email è già registrata. Prova ad accedere o usa un altro indirizzo.',
-        goToLogin: 'Vai al Login'
+        goToLogin: 'Vai al Login',
+        forgotPasswordLink: 'Password dimenticata?',
+        forgotPasswordTitle: 'Recupera Password',
+        forgotPasswordDesc: 'Inserisci la tua email per ricevere un link per reimpostare la tua password.',
+        sendResetLinkButton: 'Invia Link di Reset',
+        resetLinkSent: 'Se l\'indirizzo email è registrato, riceverai a breve un link per reimpostare la tua password.',
+        newPasswordLabel: 'Nuova Password',
+        resetPasswordButton: 'Reimposta Password',
+        resetPasswordSuccess: 'Password reimpostata con successo! Ora puoi accedere con la nuova password.',
+        passwordResetting: 'Reimpostazione in corso...'
     },
     en: {
         dashboardTitle: 'My Gift Lists',
@@ -197,7 +206,16 @@ const translations = {
         unexpectedError: 'An unexpected error occurred. Please try again.',
         registrationSuccess: "Registration complete. Check your email to verify your account!",
         emailAlreadyRegistered: 'This email is already registered. Try logging in or use another address.',
-        goToLogin: 'Go to Login'
+        goToLogin: 'Go to Login',
+        forgotPasswordLink: 'Forgot password?',
+        forgotPasswordTitle: 'Reset Password',
+        forgotPasswordDesc: 'Enter your email to receive a password reset link.',
+        sendResetLinkButton: 'Send Reset Link',
+        resetLinkSent: 'If the email is registered, you will soon receive a password reset link.',
+        newPasswordLabel: 'New Password',
+        resetPasswordButton: 'Reset Password',
+        resetPasswordSuccess: 'Password reset successful! You can now log in with your new password.',
+        passwordResetting: 'Resetting password...'
     }
 };
 

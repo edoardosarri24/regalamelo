@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
@@ -14,6 +14,7 @@ export const VerifyEmailPage = () => {
     const { login } = useAuth();
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [errorMessage, setErrorMessage] = useState('');
+    const verificationStarted = useRef(false);
 
     useEffect(() => {
         const token = searchParams.get('token');
@@ -22,6 +23,9 @@ export const VerifyEmailPage = () => {
             setErrorMessage(t('tokenMissing'));
             return;
         }
+
+        if (verificationStarted.current) return;
+        verificationStarted.current = true;
 
         const verify = async () => {
             try {
@@ -35,7 +39,7 @@ export const VerifyEmailPage = () => {
         };
 
         verify();
-    }, [searchParams, login]);
+    }, [searchParams, login, t]);
 
     return (
         <div className={styles.formContainer}>

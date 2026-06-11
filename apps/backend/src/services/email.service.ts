@@ -172,3 +172,98 @@ export const sendVerificationEmail = async (
         console.error(`[Email Server] Failed to send verification email to ${email}:`, error);
     }
 };
+
+export const sendPasswordResetEmail = async (
+    email: string,
+    token: string,
+    language: string = 'en'
+): Promise<void> => {
+    try {
+        const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, FRONTEND_URL } = process.env;
+        
+        const baseUrl = FRONTEND_URL || 'http://localhost:5173';
+        const resetUrl = `${baseUrl}/auth/reset-password?token=${token}`;
+
+        if (!SMTP_HOST || SMTP_HOST === 'localhost' || SMTP_HOST === 'mock') {
+            console.log(`[Email Mock] Password reset email skipped for ${email}. SMTP_HOST is not configured with a real server.`);
+            console.log(`Testo previsto:\nReset URL: ${resetUrl}`);
+            return;
+        }
+
+        const transporter = nodemailer.createTransport({
+            host: SMTP_HOST,
+            port: Number(SMTP_PORT) || 587,
+            secure: Number(SMTP_PORT) === 465,
+            auth: {
+                user: SMTP_USER,
+                pass: SMTP_PASS,
+            },
+        });
+
+        const subject = language === 'it' 
+            ? 'Richiesta di reset password per Regalamelo' 
+            : 'Password Reset Request for Regalamelo';
+
+        const text = language === 'it'
+            ? `Ciao,\n\nAbbiamo ricevuto una richiesta di reset della password per il tuo account. Clicca sul link seguente per impostare una nuova password. Questo link scadrà tra 15 minuti:\n\n${resetUrl}\n\nSe non hai richiesto questo reset, puoi tranquillamente ignorare questa email.`
+            : `Hi,\n\nWe received a request to reset the password for your account. Click the link below to set a new password. This link will expire in 15 minutes:\n\n${resetUrl}\n\nIf you did not request this, you can safely ignore this email.`;
+
+        const html = language === 'it'
+            ? `
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+                    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                        <img src="https://regalamelo.edoardosarri.com/og-image.png" alt="Regalamelo Logo" style="max-width: 100%; height: auto; border-radius: 4px;" />
+                    </div>
+                    <div style="padding: 30px; color: #334155; line-height: 1.6;">
+                        <h2 style="color: #0f172a; margin-top: 0; font-size: 24px;">Reset della Password</h2>
+                        <p style="font-size: 16px;">Ciao,</p>
+                        <p style="font-size: 16px;">Abbiamo ricevuto una richiesta di reset della password per il tuo account. Clicca sul pulsante qui sotto per impostare una nuova password. Questo link scadrà tra 15 minuti:</p>
+                        <div style="text-align: center; margin: 35px 0;">
+                            <a href="${resetUrl}" style="background-color: #3b82f6; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; display: inline-block;">Reimposta Password</a>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 0;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</p>
+                        <p style="color: #3b82f6; font-size: 14px; word-break: break-all; margin-top: 5px;">${resetUrl}</p>
+                        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 25px 0;" />
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 0;">Se non hai richiesto tu questo reset, puoi tranquillamente ignorare questa email.</p>
+                    </div>
+                    <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb; color: #64748b; font-size: 13px;">
+                        <p style="margin: 0;">&copy; ${new Date().getFullYear()} Regalamelo. Tutti i diritti riservati.</p>
+                    </div>
+                </div>
+            `
+            : `
+                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
+                    <div style="background-color: #f8fafc; padding: 20px; text-align: center; border-bottom: 1px solid #e5e7eb;">
+                        <img src="https://regalamelo.edoardosarri.com/og-image.png" alt="Regalamelo Logo" style="max-width: 100%; height: auto; border-radius: 4px;" />
+                    </div>
+                    <div style="padding: 30px; color: #334155; line-height: 1.6;">
+                        <h2 style="color: #0f172a; margin-top: 0; font-size: 24px;">Password Reset Request</h2>
+                        <p style="font-size: 16px;">Hi,</p>
+                        <p style="font-size: 16px;">We received a request to reset the password for your account. Click the button below to set a new password. This link will expire in 15 minutes:</p>
+                        <div style="text-align: center; margin: 35px 0;">
+                            <a href="${resetUrl}" style="background-color: #3b82f6; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; display: inline-block;">Reset Password</a>
+                        </div>
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 0;">If the button doesn't work, copy and paste this link into your browser:</p>
+                        <p style="color: #3b82f6; font-size: 14px; word-break: break-all; margin-top: 5px;">${resetUrl}</p>
+                        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 25px 0;" />
+                        <p style="color: #64748b; font-size: 14px; margin-bottom: 0;">If you did not request this reset, you can safely ignore this email.</p>
+                    </div>
+                    <div style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb; color: #64748b; font-size: 13px;">
+                        <p style="margin: 0;">&copy; ${new Date().getFullYear()} Regalamelo. All rights reserved.</p>
+                    </div>
+                </div>
+            `;
+
+        await transporter.sendMail({
+            from: `"Regalamelo" <${SMTP_USER}>`,
+            to: email,
+            subject,
+            text,
+            html,
+        });
+
+        console.log(`[Email Server] Password reset email sent successfully to: ${email}`);
+    } catch (error) {
+        console.error(`[Email Server] Failed to send password reset email to ${email}:`, error);
+    }
+};

@@ -65,5 +65,21 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: --interval 300 frontend api
 
+  db-backup:
+    image: prodrigestivill/postgres-backup-local
+    restart: always
+    volumes:
+      - NAS_DATABASE_DATA:/var/lib/postgresql/data:ro
+      - ./backups:/backups
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=giftlistdb
+      - POSTGRES_USER=giftlistuser
+      - POSTGRES_PASSWORD=miaPasswordSicura
+      - SCHEDULE=@daily
+      - BACKUP_KEEP_DAYS=7
+    depends_on:
+      - db
+
 volumes:
   NAS_DATABASE_DATA:
