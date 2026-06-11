@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   frontend:
-    image: ghcr.io/edoardosarri24/gift-list-frontend:main
+    container_name: frontend
+    image: ghcr.io/edoardosarri24/regalamelo-frontend:main
     restart: always
     environment:
       - VITE_API_BASE_URL=https://regalamelo.edoardosarri.com/api/v1
@@ -13,7 +14,8 @@ services:
         max-file: "3"
 
   api:
-    image: ghcr.io/edoardosarri24/gift-list-backend:main
+    container_name: api
+    image: ghcr.io/edoardosarri24/regalamelo-backend:main
     restart: always
     environment:
       - DATABASE_URL=postgresql://giftlistuser:miaPasswordSicura@db:5432/giftlistdb
