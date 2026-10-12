@@ -1,6 +1,6 @@
 services:
-  frontend:
-    container_name: frontend
+  regalamelo-frontend:
+    container_name: regalamelo-frontend
     image: ghcr.io/edoardosarri24/regalamelo-frontend:main
     restart: always
     env_file:
@@ -8,22 +8,22 @@ services:
     environment:
       - VITE_API_BASE_URL=https://regalamelo.edoardosarri.com/api/v1
     depends_on:
-      - api
+      - regalamelo-api
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
 
-  api:
-    container_name: api
+  regalamelo-api:
+    container_name: regalamelo-api
     image: ghcr.io/edoardosarri24/regalamelo-backend:main
     restart: always
     command: sh -c "if npx prisma migrate deploy; then echo 'Migrations up to date'; else echo 'Deploy failed, trying to baseline 0_init...' && npx prisma migrate resolve --applied 0_init && npx prisma migrate deploy; fi && exec node dist/index.js"
     env_file:
       - nas.env
     depends_on:
-      db:
+      regalamelo-db:
         condition: service_healthy
     logging:
       driver: "json-file"
@@ -31,7 +31,8 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  db:
+  regalamelo-db:
+    container_name: regalamelo-db
     image: postgres:17-alpine
     restart: always
     volumes:
@@ -51,26 +52,29 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  tunnel:
+  regalamelo-tunnel:
+    container_name: regalamelo-tunnel
     image: cloudflare/cloudflared:latest
     restart: always
     command: tunnel run
     env_file:
       - nas.env
     depends_on:
-      - frontend
-      - api
+      - regalamelo-frontend
+      - regalamelo-api
 
-  watchtower:
+  regalamelo-watchtower:
+    container_name: regalamelo-watchtower
     image: containrrr/watchtower
     restart: always
     environment:
       - DOCKER_API_VERSION=1.40
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    command: --interval 300 frontend api
+    command: --interval 300 regalamelo-frontend regalamelo-api
 
-  db-backup:
+  regalamelo-db-backup:
+    container_name: regalamelo-db-backup
     image: prodrigestivill/postgres-backup-local
     restart: always
     volumes:
@@ -79,11 +83,11 @@ services:
     env_file:
       - nas.env
     environment:
-      - POSTGRES_HOST=db
+      - POSTGRES_HOST=regalamelo-db
       - SCHEDULE=@daily
       - BACKUP_KEEP_DAYS=7
     depends_on:
-      - db
+      - regalamelo-db
 
 volumes:
   NAS_DATABASE_DATA:

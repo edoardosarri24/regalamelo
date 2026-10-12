@@ -1,9 +1,0 @@
-packages:
-  - 'packages/*'
-  - 'apps/*'
-
-allowBuilds:
-  esbuild: true
-  "@prisma/client": true
-  "@prisma/engines": true
-  prisma: true
