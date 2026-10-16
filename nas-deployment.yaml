@@ -3,6 +3,10 @@ services:
     container_name: regalamelo-frontend
     image: ghcr.io/edoardosarri24/regalamelo-frontend:main
     restart: always
+    networks:
+      default:
+        aliases:
+          - frontend
     env_file:
       - nas.env
     environment:
@@ -19,6 +23,10 @@ services:
     container_name: regalamelo-api
     image: ghcr.io/edoardosarri24/regalamelo-backend:main
     restart: always
+    networks:
+      default:
+        aliases:
+          - api
     command: sh -c "if npx prisma migrate deploy; then echo 'Migrations up to date'; else echo 'Deploy failed, trying to baseline 0_init...' && npx prisma migrate resolve --applied 0_init && npx prisma migrate deploy; fi && exec node dist/index.js"
     env_file:
       - nas.env
@@ -35,6 +43,10 @@ services:
     container_name: regalamelo-db
     image: postgres:17-alpine
     restart: always
+    networks:
+      default:
+        aliases:
+          - db
     volumes:
       - NAS_DATABASE_DATA:/var/lib/postgresql/data
     env_file:
