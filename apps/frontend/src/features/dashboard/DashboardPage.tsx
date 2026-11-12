@@ -13,8 +13,16 @@ import { useQueryClient, useMutation } from '@tanstack/react-query';
 import { useLanguage } from '../../i18n/LanguageContext';
 
 export const DashboardPage = () => {
-    const { user, logout } = useAuth();
+    const { user, logout, isLoading: isAuthLoading } = useAuth();
     const { t, language, setLanguage } = useLanguage();
+    const { data: lists, isLoading } = useQuery({
+        queryKey: ['dashboard-lists'],
+        queryFn: async () => {
+            const { data } = await api.get<{ ownedLists: GiftListDTO[], invitedLists: GiftListDTO[] }>('/lists');
+            return data;
+        },
+        enabled: !!user,
+    });
     const queryClient = useQueryClient();
     const [joinInput, setJoinInput] = useState('');
     const [joinError, setJoinError] = useState('');
@@ -97,15 +105,8 @@ export const DashboardPage = () => {
         );
     };
 
+    if (isAuthLoading) return null;
     if (!user) return <Navigate to="/" replace />;
-
-    const { data: lists, isLoading } = useQuery({
-        queryKey: ['dashboard-lists'],
-        queryFn: async () => {
-            const { data } = await api.get<{ ownedLists: GiftListDTO[], invitedLists: GiftListDTO[] }>('/lists');
-            return data;
-        },
-    });
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>

@@ -7,6 +7,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import styles from './Auth.module.css';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { LanguageToggle } from '../../components/LanguageToggle';
+import { getSafeReturnTo } from '../../lib/returnTo';
 
 export const LandingPage = () => {
     const { user, isLoading } = useAuth();
@@ -16,9 +17,7 @@ export const LandingPage = () => {
 
     if (isLoading) return null;
     if (user) {
-        const params = new URLSearchParams(location.search);
-        const returnTo = params.get('returnTo') || '/dashboard';
-        return <Navigate to={returnTo} replace />;
+        return <Navigate to={getSafeReturnTo(location.search)} replace />;
     }
 
     const baseUrl = 'https://regalamelo.edoardosarri.com';

@@ -24,6 +24,19 @@ api.interceptors.request.use((config) => {
 });
 
 
+// Share a single in-flight refresh between concurrent 401s: the backend rotates
+// the refresh token, so parallel refresh calls would invalidate each other.
+let refreshPromise: Promise<string> | null = null;
+export const refreshAccessToken = () => {
+    if (!refreshPromise) {
+        refreshPromise = axios
+            .post('/api/v1/auth/refresh', {}, { withCredentials: true })
+            .then(({ data }) => data.token as string)
+            .finally(() => { refreshPromise = null; });
+    }
+    return refreshPromise;
+};
+
 api.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -33,16 +46,13 @@ api.interceptors.response.use(
         if (
             error.response?.status === 401 && 
             !originalRequest._retry && 
-            !originalRequest.url?.includes('/auth/verify-email')
+            !originalRequest.url?.includes('/auth/verify-email') &&
+            !originalRequest.url?.includes('/auth/refresh') &&
+            !originalRequest.url?.includes('/auth/login')
         ) {
             originalRequest._retry = true;
             try {
-                const { data } = await axios.post(
-                    '/api/v1/auth/refresh',
-                    {},
-                    { withCredentials: true }
-                );
-                const { token } = data;
+                const token = await refreshAccessToken();
                 setAuthToken(token);
 
                 originalRequest.headers['Authorization'] = `Bearer ${token}`;

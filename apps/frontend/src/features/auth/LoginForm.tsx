@@ -7,14 +7,16 @@ import { Button } from '../../components/Button';
 import { Card } from '../../components/Card';
 import api from '../../lib/axios';
 import { useAuth } from '../../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Auth.module.css';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { getSafeReturnTo } from '../../lib/returnTo';
 
 export const LoginForm = ({ onToggle }: { onToggle: () => void }) => {
     const { login } = useAuth();
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const location = useLocation();
     const [serverError, setServerError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [showResend, setShowResend] = useState(false);
@@ -40,7 +42,9 @@ export const LoginForm = ({ onToggle }: { onToggle: () => void }) => {
         try {
             const res = await api.post('/auth/login', data);
             login(res.data.token, res.data.user);
-            navigate('/dashboard');
+            // Go back to the page that required login (e.g. a shared list link).
+            // Only allow internal paths to avoid open redirects.
+            navigate(getSafeReturnTo(location.search), { replace: true });
         } catch (err: any) {
             if (err.response) {
                 const status = err.response.status;

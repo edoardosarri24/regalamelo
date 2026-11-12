@@ -9,23 +9,28 @@ import { GiftCard } from './GiftCard';
 import { Copy, Check, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { Button } from '../../components/Button';
+import { useAuth } from '../../hooks/useAuth';
 
 export const PublicListPage = () => {
     const { slug } = useParams<{ slug: string }>();
     const location = useLocation();
-    const { language } = useLanguage();
+    const { t, language } = useLanguage();
+    const { user, isLoading: isAuthLoading } = useAuth();
     const queryClient = useQueryClient();
     const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
     const [isEditingName, setIsEditingName] = useState(false);
     const [editNameValue, setEditNameValue] = useState('');
 
-    const { data: list, isLoading, error } = useQuery({
+    const { data: list, isLoading } = useQuery({
         queryKey: ['public-list', slug],
         queryFn: async () => {
             const { data } = await api.get<GiftListDTO>(`/lists/${slug}`);
             return data;
         },
+        // Wait for the session to be restored, otherwise the request races the
+        // refresh-token call made by AuthProvider on page load.
+        enabled: !!user && !!slug,
         retry: false
     });
 
@@ -36,7 +41,7 @@ export const PublicListPage = () => {
                 setEditNameValue(list.customName || list.name);
             }
         }
-    }, [list, slug, language]);
+    }, [list?.id, slug, language]);
 
     const updateNameMutation = useMutation({
         mutationFn: (customName: string) => api.put(`/lists/${slug}/access`, { customName }),
@@ -70,16 +75,14 @@ export const PublicListPage = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    if (isLoading) return <div style={{ padding: '48px', textAlign: 'center' }}>{t('loading')}</div>;
-
-    // If unauthorized, guest doesn't have a session, redirect to login
-    if (error && (error as any).response?.status === 401) {
-        return <Navigate to={`/?returnTo=${encodeURIComponent(location.pathname)}`} replace />;
+    // Not logged in (or session expired, which clears `user`): go to login and come back here afterwards
+    if (!isAuthLoading && !user) {
+        return <Navigate to={`/?returnTo=${encodeURIComponent(location.pathname + location.search)}`} replace />;
     }
 
-    if (!list) return <div style={{ padding: '48px', textAlign: 'center' }}>{t('listNotFound')}</div>;
+    if (isAuthLoading || isLoading) return <div style={{ padding: '48px', textAlign: 'center' }}>{t('loading')}</div>;
 
-    const { t } = useLanguage();
+    if (!list) return <div style={{ padding: '48px', textAlign: 'center' }}>{t('listNotFound')}</div>;
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
